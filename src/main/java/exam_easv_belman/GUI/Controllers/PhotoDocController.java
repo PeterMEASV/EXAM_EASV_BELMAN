@@ -36,8 +36,6 @@ import javafx.scene.Node;
 
 public class PhotoDocController {
     @FXML
-    public Button btnOpenCamera;
-    @FXML
     private Text txtOrderNumber; // THIS CAN ALSO HOLD THE PRODUCT NUMBER, IF USER CHOOSES SO
     @FXML
     private Button btnPrev;
@@ -177,17 +175,12 @@ private void handleImageClick(Photo photo) {
         }
         else
         {
-            btnOpenCamera.setDisable(true);
             int pageCount = 1;
             pagination.setPageCount(pageCount);
             pagination.setPageFactory(this::fillPhotoGrid);
         }
         populateMenu();
 
-    }
-
-    public void handleCamera(ActionEvent actionEvent) {
-        Navigator.getInstance().goTo(View.CAMERA);
     }
 
     public void handleReturn(ActionEvent actionEvent) {
@@ -237,7 +230,6 @@ private void handleImageClick(Photo photo) {
                     SessionManager.getInstance().setIsProduct(true);
                     SessionManager.getInstance().setCurrentProductNumber(product.getProduct_number());
                     setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
-                    btnOpenCamera.setDisable(false);
                 } catch (Exception e) {
                     AlertHelper.showAlert("Error", "Failed to load PhotoDocView (PopulateMenu)", Alert.AlertType.ERROR);
                     e.printStackTrace();
