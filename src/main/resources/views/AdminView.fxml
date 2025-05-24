@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -30,6 +32,28 @@
                      </children>
                   </StackPane>
                   <Region prefHeight="42.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <MenuButton mnemonicParsing="false" text="Fancy name">
+                     <items>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnQC" mnemonicParsing="false" onAction="#handleQC" text="QC" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnUser" mnemonicParsing="false" onAction="#handleUserManagement" text="User" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnOrder1" mnemonicParsing="false" onAction="#handleOrder" text="ORDER" />
+                           </graphic>
+                        </MenuItem>
+                     </items>
+                     <HBox.margin>
+                        <Insets right="100.0" top="15.0" />
+                     </HBox.margin>
+                  </MenuButton>
                   <Label fx:id="lblCurrentUser">
                      <HBox.margin>
                         <Insets right="10.0" top="19.0" />

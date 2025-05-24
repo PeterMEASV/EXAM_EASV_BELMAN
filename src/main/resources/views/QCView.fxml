@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="523.0" prefWidth="862.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.QCController">
+<VBox prefHeight="523.0" prefWidth="862.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.QCController">
    <children>
       <HBox prefHeight="43.0" prefWidth="540.0">
          <children>
@@ -53,11 +53,28 @@
                               <Insets left="-20.0" />
                            </HBox.margin>
                          </MenuButton>
-                        <Button fx:id="btnOrder" mnemonicParsing="false" onAction="#handleOrder" text="ORDER">
+                        <MenuButton fx:id="DRPDown" mnemonicParsing="false" text="Fancy name">
+                           <items>
+                              <MenuItem mnemonicParsing="false">
+                                 <graphic>
+                                    <Button fx:id="btnQC" mnemonicParsing="false" onAction="#handleQC" text="QC" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem mnemonicParsing="false">
+                                 <graphic>
+                                    <Button fx:id="btnUser" mnemonicParsing="false" onAction="#handleUserManagement" text="User" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem mnemonicParsing="false">
+                                 <graphic>
+                                    <Button fx:id="btnOrder1" mnemonicParsing="false" onAction="#handleOrder" text="ORDER" />
+                                 </graphic>
+                              </MenuItem>
+                           </items>
                            <HBox.margin>
-                              <Insets left="50.0" />
+                              <Insets left="10.0" />
                            </HBox.margin>
-                        </Button>
+                        </MenuButton>
                      </children>
                   </HBox>
                     <Button fx:id="btnPrev" mnemonicParsing="false" onAction="#handleReturn" styleClass="side-button" stylesheets="@../css/general.css" StackPane.alignment="CENTER_RIGHT">

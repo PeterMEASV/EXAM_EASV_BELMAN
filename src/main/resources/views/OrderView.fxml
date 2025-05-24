@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -11,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.OrderController">
+<VBox stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.OrderController">
    <children>
       <HBox prefHeight="53.0" prefWidth="600.0">
          <children>
@@ -32,11 +34,27 @@
                         <Font size="24.0" />
                      </font>
                   </Text>
-                  <Button fx:id="btnUser" mnemonicParsing="false" onAction="#handleUserManagement" text="User">
+                  <MenuButton fx:id="DRPDown" mnemonicParsing="false" text="Fancy name">
+                    <items>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnQC" mnemonicParsing="false" onAction="#handleQC" text="QC" />
+                           </graphic>
+                        </MenuItem>
+                      <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnUser" mnemonicParsing="false" onAction="#handleUserManagement" text="User" />
+                           </graphic>
+                        </MenuItem>
+                      <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnOrder" mnemonicParsing="false" onAction="#handleOrder" text="ORDER" />
+                           </graphic></MenuItem>
+                    </items>
                      <StackPane.margin>
-                        <Insets left="350.0" />
+                        <Insets left="300.0" />
                      </StackPane.margin>
-                  </Button>
+                  </MenuButton>
                </children>
             </StackPane>
          </children>

@@ -34,12 +34,11 @@ import java.util.ResourceBundle;
 
 public class QCController implements Initializable {
 
+    public MenuButton DRPDown;
     @FXML
     private Text txtOrderNumber;
     @FXML
     private Button btnPrev;
-    @FXML
-    private Button btnOrder;
     @FXML
     private Pagination pagination;
     @FXML
@@ -99,9 +98,9 @@ public class QCController implements Initializable {
 
         User currentUser = SessionManager.getInstance().getCurrentUser();
         if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
-            btnOrder.setVisible(true);
+            DRPDown.setVisible(true);
         } else {
-            btnOrder.setVisible(false);
+            DRPDown.setVisible(false);
         }
     }
 
@@ -287,6 +286,22 @@ public class QCController implements Initializable {
                 }
             });
             btnProduct.getItems().add(menuItem);
+        }
+    }
+
+    public void handleQC(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.QCView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleUserManagement(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ADMIN);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

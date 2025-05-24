@@ -54,4 +54,20 @@ public class PhotoManager {
     public void addTagToPhoto(Photo photo, Tag tag) throws SQLException {
         tagDataAccess.addTagToPhoto(photo, tag);
     }
+
+    //Probably not the currect way of doing this
+    public User getUserById(int userId) throws Exception {
+        UserManager userManager = new UserManager();
+        ObservableList<User> allUsers = userManager.getAllUsers();
+
+        for (User user : allUsers) {
+            if (user.getId() == userId) {
+                return user;
+            }
+        }
+
+        throw new Exception("User not found for ID: " + userId);
+    }
+
+
 }

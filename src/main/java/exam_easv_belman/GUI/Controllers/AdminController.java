@@ -329,5 +329,29 @@ public class AdminController implements Initializable {
             }
         }
     }
+
+    public void handleQC(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.QCView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleUserManagement(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ADMIN);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleOrder(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ORDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 

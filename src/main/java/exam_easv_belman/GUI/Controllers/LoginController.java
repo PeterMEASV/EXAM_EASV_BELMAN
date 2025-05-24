@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,6 +40,9 @@ public class LoginController implements Initializable {
     static {
     nu.pattern.OpenCV.loadLocally();
 }
+
+    public Button btnTogglePassword;
+    public TextField txtPasswordVisible;
     private QRCodeDetector qrCodeDetector = new QRCodeDetector();
 
     private UserModel userModel;
@@ -273,4 +277,26 @@ public class LoginController implements Initializable {
                 AlertHelper.showAlert("Error", "could not shut down the camera.", Alert.AlertType.ERROR);
             }
         }
+
+    public void handleTogglePassword(ActionEvent actionEvent) {
+        if (txtPassword.isVisible()) {
+            txtPassword.setVisible(false);
+            txtPasswordVisible.setVisible(true);
+            txtPassword.setMaxWidth(0);
+            txtPasswordVisible.setMaxWidth(750);
+            txtPasswordVisible.setText(txtPassword.getText());
+            btnTogglePassword.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/ClosedEye.png")))));
+            btnTogglePassword.setStyle("-fx-background-color: transparent;");
+
+        }
+        else if(!txtPassword.isVisible()) {
+            txtPassword.setVisible(true);
+            txtPasswordVisible.setVisible(false);
+            txtPassword.setMaxWidth(750);
+            txtPasswordVisible.setMaxWidth(0);
+            txtPasswordVisible.setText(txtPassword.getText());
+            btnTogglePassword.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/OpenEye.png")))));
+            btnTogglePassword.setStyle("-fx-background-color: transparent;");
+        }
     }
+}

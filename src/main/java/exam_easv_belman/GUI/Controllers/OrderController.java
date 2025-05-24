@@ -11,6 +11,7 @@ import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 
 import javafx.event.ActionEvent;
@@ -27,6 +28,7 @@ import java.util.Objects;
 
 public class OrderController {
 
+    public MenuButton DRPDown;
     @FXML
     private TextField OrderNumber;
 
@@ -39,8 +41,7 @@ public class OrderController {
     private Button btnSearch;
     @FXML
     private Button btnLogOut;
-    @FXML
-    private Button btnUser;
+
 
 
     @FXML
@@ -62,9 +63,9 @@ public class OrderController {
 
         User currentUser = SessionManager.getInstance().getCurrentUser();
         if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
-            btnUser.setVisible(true);
+            DRPDown.setVisible(true);
         } else {
-            btnUser.setVisible(false);
+            DRPDown.setVisible(false);
         }
 
 
@@ -182,5 +183,20 @@ public class OrderController {
         }
     }
 
+    public void handleOrder(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ORDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleQC(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.QCView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 

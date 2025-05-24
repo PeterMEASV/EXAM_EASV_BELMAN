@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane prefHeight="534.0" prefWidth="767.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.LoginController">
+<BorderPane prefHeight="534.0" prefWidth="767.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.LoginController">
    <center>
       <StackPane fx:id="stackMain">
          <children>
@@ -25,17 +25,22 @@
                         <Image url="@../Images/BELMAN_Logo_264pxl.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="txtUsername" maxWidth="600.0" prefHeight="37.0" prefWidth="543.0" promptText="Username" stylesheets="@../css/general.css" VBox.vgrow="SOMETIMES">
-            
-                                 <VBox.margin>
-                        <Insets left="80.0" right="80.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <PasswordField fx:id="txtPassword" maxWidth="600.0" prefHeight="39.0" prefWidth="295.0" promptText="Password" styleClass="text-field" stylesheets="@../css/general.css" VBox.vgrow="ALWAYS">
-                     <VBox.margin>
-                        <Insets left="80.0" right="80.0" top="20.0" />
-                     </VBox.margin>
-                  </PasswordField>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <TextField fx:id="txtUsername" maxWidth="600.0" prefHeight="37.0" prefWidth="543.0" promptText="Username" stylesheets="@../css/general.css" />
+                     </children>
+                  </StackPane>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <PasswordField fx:id="txtPassword" maxWidth="600.0" prefHeight="39.0" prefWidth="295.0" promptText="Password" styleClass="text-field" stylesheets="@../css/general.css" />
+                        <TextField fx:id="txtPasswordVisible" maxWidth="600.0" prefHeight="39.0" prefWidth="295.0" promptText="Password" styleClass="h2" stylesheets="@../../../../../../../Users/David/OneDrive/Skrivebord/Skole/Store%20Projekter/UTTT/EventTicketApp/src/main/resources/css/eventmanagementstyle.css" visible="false" />
+                        <Button fx:id="btnTogglePassword" ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#handleTogglePassword" prefHeight="43.0" prefWidth="50.0" styleClass="PasswordButton" stylesheets="@../../../../../../../Users/David/OneDrive/Skrivebord/Skole/Store%20Projekter/UTTT/EventTicketApp/src/main/resources/css/Base-stylesheet.css" textOverrun="CLIP">
+                           <StackPane.margin>
+                              <Insets left="550.0" />
+                           </StackPane.margin>
+                        </Button>
+                     </children>
+                  </StackPane>
                   <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#handleLogin" prefHeight="25.0" prefWidth="164.0" stylesheets="@../css/general.css" text="Log in">
                      <VBox.margin>
                         <Insets top="20.0" />
@@ -54,7 +59,7 @@
             </VBox>
             <VBox fx:id="vBoxQR" alignment="CENTER" maxHeight="Infinity" maxWidth="Infinity" prefHeight="400.0" prefWidth="600.0">
 
-            <children>
+                        <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Scan your QR code">
                      <font>
                         <Font name="Arial" size="17.0" />

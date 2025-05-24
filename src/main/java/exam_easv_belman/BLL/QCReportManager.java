@@ -1,9 +1,12 @@
 package exam_easv_belman.BLL;
 
 import exam_easv_belman.BE.Photo;
+import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.util.PdfGeneratorUtil;
+import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.SessionManager;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
@@ -17,9 +20,13 @@ import java.util.stream.Collectors;
 
 public class QCReportManager {
     private PhotoManager photoManager;
+    private ProductModel productModel;
+
+
 
     public QCReportManager() throws Exception {
         this.photoManager = new PhotoManager();
+        this.productModel = new ProductModel();
     }
 
     /**
@@ -31,86 +38,57 @@ public class QCReportManager {
      * @param mainStage      The main application stage, used for displaying dialogs or file previews.
      * @throws Exception If an error occurs during the generation process.
      */
-    public void generateQCReportPDF(String outputFilePath, String email, String comment, Stage mainStage) throws Exception {
-        // Fetch session details
-        SessionManager sessionManager = SessionManager.getInstance();
-        String orderNumber = sessionManager.getCurrentOrderNumber();
-        boolean isProduct = sessionManager.getIsProduct();
-        String productNumber = sessionManager.getCurrentProductNumber();
+    public void generateQCReportPDF(String outputFilePath,
+                                    String email,
+                                    String comment,
+                                    Stage mainStage) throws Exception {
+        // Retrieve session information
+        String orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
+        String qcName = SessionManager.getInstance().getCurrentUser().getFirstName() + " " +
+                SessionManager.getInstance().getCurrentUser().getLastName();
+        String qcSignaturePath = SessionManager.getInstance().getCurrentUser().getSignaturePath();
 
-        // Gather QC details
-        User qcUser = sessionManager.getCurrentUser();
-        String qcName = qcUser.getFirstName() + " " + qcUser.getLastName();
-        String qcSignaturePath = qcUser.getSignaturePath();
+        // Fetch all products in the order
+        ObservableList<Product> productsForOrder = productModel.getProductsForOrder(orderNumber);
 
-        // Retrieve photos and group by product number
-        ObservableList<Photo> photos = isProduct
-                ? photoManager.getImagesForProduct(productNumber)
-                : photoManager.getImagesForOrder(orderNumber);
-        Map<String, List<Photo>> groupedPhotos = photos.stream()
-                .collect(Collectors.groupingBy(photo -> extractProductNumber(photo.getOrderNumber())));
+        // Filter out products with no associated images
+        ObservableList<Product> filteredProducts = FXCollections.observableList(
+                productsForOrder.stream()
+                        .filter(product -> {
+                            try {
+                                return !photoManager.getImagesForProduct(product.getProduct_number()).isEmpty();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                return false;
+                            }
+                        })
+                        .collect(Collectors.toList())
+        );
 
-        // Prepare headers, photo paths, and comments
-        List<String> headers = new ArrayList<>();
-        List<String> photoPaths = new ArrayList<>();
-        List<String> imageComments = new ArrayList<>();
+        // Retrieve unique operators for the filtered products
+        List<String> uniqueOperators = PdfGeneratorUtil.getUniqueOperators(filteredProducts, photoManager);
 
-        for (Map.Entry<String, List<Photo>> entry : groupedPhotos.entrySet()) {
-            String productNumberHeader = entry.getKey(); // Header like "001", "002"
-            List<Photo> productPhotos = entry.getValue();
+        // Format the unique operator names for the PDF
+        String formattedUniqueOperators = String.join(", ", uniqueOperators);
 
-            headers.add("Product: " + productNumberHeader); // Add product header
-            photoPaths.addAll(productPhotos.stream().map(Photo::getFilepath).collect(Collectors.toList()));
-            imageComments.addAll(productPhotos.stream().map(Photo::getComment).collect(Collectors.toList()));
-        }
-
-        // Resolve operator names
-        UserManager userManager = new UserManager();
-        List<String> operatorNames = photos.stream()
-                .map(photo -> {
-                    try {
-                        return userManager.getAllUsers().stream()
-                                .filter(user -> user.getId() == photo.getUploadedBy())
-                                .findFirst()
-                                .map(uploader -> uploader.getFirstName() + " " + uploader.getLastName())
-                                .orElse("Unknown Operator");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return "Unknown Operator";
-                    }
-                })
-                .distinct()
-                .collect(Collectors.toList());
-        String opName = String.join(", ", operatorNames);
-
-        // Generate the PDF with headers
+        // Pass the required data to the PDF generator
         PdfGeneratorUtil.generatePdf(
                 outputFilePath,
                 email,
                 comment,
-                isProduct ? productNumber : orderNumber,
-                false,              // Do not delete after preview
-                mainStage,          // Stage instance
-                headers,            // Product headers
-                photoPaths,         // Photo paths
-                qcName,             // QC name
-                qcSignaturePath,    // QC signature path
-                opName,             // Operator names
-                imageComments       // Image comments
+                orderNumber,
+                true, // Option to delete files/resources if necessary
+                mainStage,
+                null, // Headers - unused in this flow
+                null, // Photo paths - handled internally in PdfGeneratorUtil
+                null, // Image comments - handled internally in PdfGeneratorUtil
+                productModel,
+                photoManager,
+                qcName,
+                qcSignaturePath,
+                formattedUniqueOperators // Unique operator list
         );
-
-
     }
-    private String extractProductNumber(String orderNumber) {
-        try {
-            String[] parts = orderNumber.split("-");
-            return parts[parts.length - 1]; // Product number is the final part
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Unknown";
-        }
-    }
-
 
 }
 
