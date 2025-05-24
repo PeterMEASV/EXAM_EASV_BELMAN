@@ -1,5 +1,6 @@
 package exam_easv_belman.GUI.Controllers;
 
+import com.google.common.base.Objects;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.OpenCVStrategy;
 import exam_easv_belman.BLL.PhotoStrategy;
@@ -67,9 +68,15 @@ public class CameraController implements Initializable {
     private List<BufferedImage> imagesToSave = new ArrayList<>();
     private String productNumber;
     private int currentPreviewIndex = -1;
+    private String tag;
 
     public CameraController() {
         photoModel = new PhotoModel();
+    }
+
+    public void setTag(String tag)
+    {
+        this.tag = tag;
     }
 
     @Override
@@ -160,6 +167,12 @@ public class CameraController implements Initializable {
             imagesToSave.add(bImage);
             btnFinish.setDisable(false);
 
+            if(!java.util.Objects.equals(tag, "Additional"))
+            {
+                openOverlayPreview(0);
+            }
+
+
 
             //TODO 1. store image in a list, could be done through the sendToGallery method.
 
@@ -195,7 +208,7 @@ public class CameraController implements Initializable {
         }
         User currentUser = SessionManager.getInstance().getCurrentUser();
         try {
-            photoModel.saveImageAndPath(imagesToSave, fileNames, currentUser, productNumber);
+            photoModel.saveImageAndPath(imagesToSave, fileNames, currentUser, productNumber, tag);
         } catch (Exception e) {
             e.printStackTrace();
             //TODO alert
@@ -286,17 +299,24 @@ public class CameraController implements Initializable {
 
     @FXML
     public void handleClosePreview(ActionEvent actionEvent) {
-        closePreview();
+
+        if (java.util.Objects.equals(tag, "Additional")) {
+            closePreview();
+        }
+        else
+        {
+            handleFinishCamera(new ActionEvent());
+        }
     }
 
     public void closePreview() {
-        isPreview = false;
-        imgFullPreview.setVisible(false);
-        previewControls.setVisible(false);
-        btnFinish.setVisible(true);
-        btnReturn.setVisible(true);
-        btnCapture.setVisible(true);
-        currentPreviewIndex = -1;
+            isPreview = false;
+            imgFullPreview.setVisible(false);
+            previewControls.setVisible(false);
+            btnFinish.setVisible(true);
+            btnReturn.setVisible(true);
+            btnCapture.setVisible(true);
+            currentPreviewIndex = -1;
     }
 
     @FXML

@@ -27,8 +27,9 @@ public class PhotoModel {
     public boolean saveImageAndPath(List<BufferedImage> images,
                                     List<String> fileNames,
                                     User uploader,
-                                    String productNumber) throws Exception {
-        return photoManager.saveImageAndPath(images, fileNames, uploader, productNumber);
+                                    String productNumber,
+                                    String tag) throws Exception {
+        return photoManager.saveImageAndPath(images, fileNames, uploader, productNumber, tag);
     }
     public ObservableList<Photo> getImagesForOrder(String orderNumber) throws Exception {
         return photoManager.getImagesForOrder(orderNumber);

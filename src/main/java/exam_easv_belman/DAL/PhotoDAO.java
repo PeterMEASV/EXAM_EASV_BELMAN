@@ -45,7 +45,8 @@ public class PhotoDAO implements IPhotoDataAccess{
     public boolean saveImageAndPath(List<BufferedImage> photos,
                                     List<String> fileNames,
                                     User uploader,
-                                    String productNumber) throws Exception {
+                                    String productNumber,
+                                    String tag) throws Exception {
 
         //check if the lists are of the same size, if not throw an exception.
         if (photos.size() != fileNames.size()) {
@@ -61,7 +62,7 @@ public class PhotoDAO implements IPhotoDataAccess{
             Path orderFolderPath = baseRelativePath.resolve(productNumber + "_Images");
             persistedPaths = saveImages(photos, fileNames, orderFolderPath);
 
-            insertImagePathToDatabase(connection, persistedPaths, uploader, getProductFromNumber(productNumber));
+            insertImagePathToDatabase(connection, persistedPaths, uploader, getProductFromNumber(productNumber), tag);
 
             connection.commit();
             return true;
@@ -164,9 +165,10 @@ public class PhotoDAO implements IPhotoDataAccess{
     public void insertImagePathToDatabase(Connection connection,
                                           List<Path> filePaths,
                                           User uploader,
-                                          Product product) throws SQLException {
+                                          Product product,
+                                          String tag) throws SQLException {
 
-        String sql = "INSERT INTO Photos (product_id, file_path, uploaded_by, uploaded_at) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Photos (product_id, file_path, uploaded_by, uploaded_at, tag) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             for (Path path : filePaths) {
@@ -174,6 +176,7 @@ public class PhotoDAO implements IPhotoDataAccess{
                 statement.setString(2, path.toString());
                 statement.setInt(3, uploader.getId());
                 statement.setObject(4, LocalDateTime.now());
+                statement.setString(5, tag);
                 statement.addBatch();
             }
             statement.executeBatch();
@@ -199,6 +202,7 @@ public class PhotoDAO implements IPhotoDataAccess{
                 tempImg.setUploadedBy(rs.getInt("uploaded_by"));
                 tempImg.setUploadTime(rs.getObject("uploaded_at", LocalDateTime.class));
                 tempImg.setComment(rs.getString("comment"));
+                tempImg.setTag(rs.getString("tag"));
                 photos.add(tempImg);
             }
             System.out.println("length:" + photos.size());
