@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="768.0" prefWidth="952.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.AdminController">
+<BorderPane prefHeight="768.0" prefWidth="952.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.AdminController">
    <top>
       <VBox prefHeight="89.0" prefWidth="952.0" BorderPane.alignment="CENTER">
          <children>
@@ -32,7 +32,7 @@
                      </children>
                   </StackPane>
                   <Region prefHeight="42.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <MenuButton mnemonicParsing="false" text="Fancy name">
+                  <MenuButton mnemonicParsing="false" style="-fx-text-fill: white;" stylesheets="@../css/general.css" text="Select Workspace">
                      <items>
                         <MenuItem mnemonicParsing="false">
                            <graphic>
@@ -53,6 +53,9 @@
                      <HBox.margin>
                         <Insets right="100.0" top="15.0" />
                      </HBox.margin>
+                     <font>
+                        <Font name="Arial" size="14.0" />
+                     </font>
                   </MenuButton>
                   <Label fx:id="lblCurrentUser">
                      <HBox.margin>
@@ -77,13 +80,12 @@
             </HBox>
             <HBox prefHeight="31.0" prefWidth="928.0">
                <children>
-                  <TextField fx:id="txtSearch" disable="true" prefHeight="30.0" prefWidth="85.0" promptText="🔍 Search ---- FIX RESIZING, SO IT MATCHES THE BOX BELOW" HBox.hgrow="ALWAYS" />
                   <Region HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </Region>
-                  <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#handleCreateUser" prefHeight="26.0" prefWidth="74.0" text="new user">
+                  <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#handleCreateUser" prefHeight="29.0" prefWidth="100.0" style="-fx-font-size: 14px;" stylesheets="@../css/general.css" text="new user">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin></Button>
@@ -134,29 +136,50 @@
                      <children>
                         <Label text="User Details">
                            <font>
-                              <Font name="System Bold" size="18.0" />
+                              <Font name="Arial Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Label text="Username" />
+                        <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Username">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="-5.0" top="5.0" />
+                           </padding></Label>
                         <TextField fx:id="txtUsername" editable="false" prefHeight="26.0" prefWidth="286.0" promptText="username" />
-                        <Label text="Password" />
+                        <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Password">
+                           <padding>
+                              <Insets bottom="-5.0" top="5.0" />
+                           </padding></Label>
                         <TextField fx:id="txtPassword" editable="false" promptText="password" />
-                        <Label text="First Name" />
+                        <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="First Name">
+                           <padding>
+                              <Insets bottom="-5.0" top="5.0" />
+                           </padding></Label>
                         <TextField fx:id="txtFirstName" editable="false" promptText="first name" />
-                        <Label text="Last Name" />
+                        <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Last Name">
+                           <padding>
+                              <Insets bottom="-5.0" top="5.0" />
+                           </padding></Label>
                         <TextField fx:id="txtLastName" editable="false" promptText="last name" />
-                        <Label text="Email Address" />
+                        <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Email Address">
+                           <padding>
+                              <Insets bottom="-5.0" top="5.0" />
+                           </padding></Label>
                         <TextField fx:id="txtEmail" editable="false" promptText="email" />
-                        <Label text="Phone Number" />
+                        <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Phone Number">
+                           <padding>
+                              <Insets bottom="-5.0" top="5.0" />
+                           </padding></Label>
                         <TextField fx:id="txtPhone" editable="false" promptText="phone" />
                         <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="438.0">
                            <children>
-                              <Button fx:id="btnSignatur" mnemonicParsing="false" onAction="#handleSetSignatur" text="Assign Signatur" visible="false">
+                              <Button fx:id="btnSignatur" mnemonicParsing="false" onAction="#handleSetSignatur" style="-fx-font-size: 14;" stylesheets="@../css/general.css" text="Assign Signatur" visible="false">
                                  <HBox.margin>
                                     <Insets right="20.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />
+                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" style="-fx-font-size: 14px;" stylesheets="@../css/general.css" text="delete user" />
                            </children>
                            <VBox.margin>
                               <Insets />

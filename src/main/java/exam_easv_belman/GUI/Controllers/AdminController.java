@@ -47,8 +47,6 @@ public class AdminController implements Initializable {
     @FXML
     public TextField txtPassword;
     @FXML
-    public TextField txtSearch;
-    @FXML
     public TextField txtFirstName;
     @FXML
     public TextField txtLastName;

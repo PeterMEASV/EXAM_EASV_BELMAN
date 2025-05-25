@@ -117,3 +117,11 @@ BorderPane {
 #lstUsers .list-cell:selected .label {
     -fx-text-fill: black;
 }
+
+.txtInformation {
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
+    -fx-margin-top: 10px;
+    -fx-margin-bottom: -10px;
+
+}

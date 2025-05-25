@@ -36,6 +36,8 @@ public class Navigator {
 
     public void init(Stage primaryStage) {
         stage = primaryStage;
+        stage.setWidth(1200);
+        stage.setHeight(750);
         goTo(View.LOGIN);
         stage.show();
     }

@@ -60,7 +60,7 @@ public class UserDAO implements IUserDataAccess {
     public User createUser(User user) throws Exception {
 
         String sql = "INSERT INTO Users (username, password_hash, role_id, first_Name, last_Name," +
-                "email, phone, qr_key, signature_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "email, phone, qr_key, signature_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 
         try (Connection connection = dbConnector.getConnection();
