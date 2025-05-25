@@ -7,6 +7,7 @@ import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
 import exam_easv_belman.GUI.util.AlertHelper;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -58,6 +60,16 @@ public class ImageController implements Initializable {
 
     @FXML
     private Button btnComment;
+    @FXML
+    private Button btnLeft;
+    @FXML
+    private Button btnRight;
+
+    private ObservableList<Photo> orderOfPhotos;
+
+    private int photoIndex;
+    @FXML
+    private Label lblInfo;
 
     public void setImage(Photo photo) {
         this.photo = photo;
@@ -65,10 +77,6 @@ public class ImageController implements Initializable {
             Image image = new Image(new File(photo.getFilepath()).toURI().toString());
             imageView.setImage(image);
         }
-    }
-
-    public void setPhoto(Photo photo){
-        this.photo = photo;
     }
 
 
@@ -88,6 +96,10 @@ public class ImageController implements Initializable {
         btnConfirm.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
         btnComment.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
         btnComment.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
+        btnLeft.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
+        btnLeft.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
+        btnRight.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
+        btnRight.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
 
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-log.png")));
         ImageView imgView = new ImageView(img);
@@ -99,6 +111,8 @@ public class ImageController implements Initializable {
         setButtonGraphic(btnDelete, "/images/icon-trash.png");
         setButtonGraphic(btnConfirm, "/images/icon-check.png");
         setButtonGraphic(btnComment, "/images/icon-note.png");
+        setButtonGraphic(btnLeft, "/images/icon-left.png");
+        setButtonGraphic(btnRight, "/images/icon-right.png");
         if(SessionManager.getInstance().getCurrentUser().getRole() == Role.OPERATOR)
         {
             btnComment.setVisible(false);
@@ -219,6 +233,39 @@ public class ImageController implements Initializable {
     }
 
 
+    @FXML
+    private void onHandleLeft(ActionEvent actionEvent) {
+        if(photoIndex == 0)
+        {
+            photoIndex = orderOfPhotos.size() - 1;
+        }
+        else
+        {
+            photoIndex -= 1;
+        }
+        setImage(orderOfPhotos.get(photoIndex));
+        lblInfo.setText(photo.getTag() + "\n" + "("+(photoIndex+1)+"/"+orderOfPhotos.size()+")");
+    }
 
+    @FXML
+    private void onHandleRight(ActionEvent actionEvent) {
+        if(photoIndex == orderOfPhotos.size() - 1)
+        {
+            photoIndex = 0;
+        }
+        else
+        {
+            photoIndex += 1;
+        }
+        setImage(orderOfPhotos.get(photoIndex));
+        lblInfo.setText(photo.getTag() + "\n" + "("+(photoIndex+1)+"/"+orderOfPhotos.size()+")");
+    }
 
+    public void setPhotoOrder(ObservableList<Photo> orderOfPhotos) {
+        this.orderOfPhotos = orderOfPhotos;
+        photoIndex = orderOfPhotos.indexOf(photo);
+
+        lblInfo.setText(photo.getTag() + "\n" + "("+(photoIndex+1)+"/"+orderOfPhotos.size()+")");
+        
+    }
 }

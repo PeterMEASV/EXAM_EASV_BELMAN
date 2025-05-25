@@ -10,6 +10,7 @@ import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
 import exam_easv_belman.GUI.util.AlertHelper;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,6 +33,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class QCController implements Initializable {
@@ -46,6 +48,10 @@ public class QCController implements Initializable {
     @FXML
     private GridPane gridPhoto;
 
+    private ObservableList<Photo> orderOfPhotos;
+    private final String[] tagOrder = {"Front", "Back", "Left", "Right", "Top", "Additional"};
+    private int tagIndex;
+
     private ObservableList<Photo> imagesFromDatabase;
 
     @FXML
@@ -57,6 +63,7 @@ public class QCController implements Initializable {
     @FXML
     private MenuButton btnProduct;
     private ProductModel productModel;
+    private ObservableList<Photo> additionalImagesFromDatabase;
 
 
     public void setOrderNumber(String orderNumber) throws Exception {
@@ -69,6 +76,14 @@ public class QCController implements Initializable {
             String productIdentifier = productNumber.substring(productNumber.lastIndexOf("-")+1);
             btnProduct.setText(productIdentifier);
             imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
+            additionalImagesFromDatabase.clear();
+            for(Photo photo : imagesFromDatabase)
+            {
+                if(java.util.Objects.equals(photo.getTag(), "Additional"))
+                {
+                    additionalImagesFromDatabase.add(photo);
+                }
+            }
             int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
             pagination.setPageCount(pageCount);
             pagination.setPageFactory(this::fillPhotoGrid);
@@ -86,6 +101,8 @@ public class QCController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        orderOfPhotos = FXCollections.observableArrayList();
+        additionalImagesFromDatabase = FXCollections.observableArrayList();
         try {
             productModel = new ProductModel();
         } catch (Exception e) {
@@ -121,8 +138,8 @@ public class QCController implements Initializable {
             AlertHelper.showAlert("Error", "Failed to load OrderView", Alert.AlertType.ERROR);
         }
     }
-    private Node fillPhotoGrid(int pageIndex) {
-        gridPhoto.getChildren().clear();
+    private Node fillFirstPhotoGrid(int pageIndex) {
+
         if (!isProduct) {
             Label noImagesLabel = new Label("Switch to a product to see images");
             noImagesLabel.getStylesheets().add("/css/general.css");
@@ -138,53 +155,136 @@ public class QCController implements Initializable {
             gridPhoto.add(noImagesLabel, 0, 0);
             return photoGridContainer;
         }
-        if(imagesFromDatabase.size() == 0)
-        {
-            Label noImagesLabel = new Label("This product has no images yet");
-            noImagesLabel.getStylesheets().add("/css/general.css");
-            noImagesLabel.getStyleClass().add("label-image");
-            noImagesLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #666666;");
 
-            // Center the label in the GridPane
-            GridPane.setHalignment(noImagesLabel, HPos.CENTER);
-            GridPane.setValignment(noImagesLabel, VPos.CENTER);
-            GridPane.setColumnSpan(noImagesLabel, 2);
-            GridPane.setRowSpan(noImagesLabel, 3);
 
-            gridPhoto.add(noImagesLabel, 0, 0);
-            return photoGridContainer;
-        }
-
-        int startIndex = pageIndex * MAX_PHOTOS;
-        int endIndex = Math.min(startIndex + MAX_PHOTOS, imagesFromDatabase.size());
         int column = 0;
         int row = 0;
 
         gridPhoto.widthProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
         gridPhoto.heightProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
-        for (int i = startIndex; i < endIndex && i < imagesFromDatabase.size(); i++) {
-            Photo photo = imagesFromDatabase.get(i);
+        tagIndex = 0;
+
+        for (int i = 0; i < 5; i++) {
+            Photo photo = getPhotoWithTag(tagIndex);
             StackPane imageContainer = new StackPane();
             imageContainer.setAlignment(Pos.CENTER);
+            ImageView imageView = new ImageView();
+            if(photo == null)
+            {
+                gridPhoto.add(imageContainer, column, row);
+            }
+            else {
+                try {
+                    if (Files.exists(Path.of(photo.getFilepath()))) {
+                        Image image = new Image(new File(photo.getFilepath()).toURI().toString());
+                        imageView.setImage(image);
+
+                        imageView.fitWidthProperty().bind(gridPhoto.widthProperty().divide(2.2));
+                        imageView.fitHeightProperty().bind(gridPhoto.heightProperty().divide(3.2));
+                        imageView.setPreserveRatio(true);
+
+                        GridPane.setMargin(imageView, new Insets(5));
+
+                        imageContainer.getChildren().add(imageView);
+                    } else {
+                        Label tempLabel = new Label("Image not found");
+                        tempLabel.getStylesheets().add("/css/general.css");
+                        tempLabel.getStyleClass().add("label-image");
+
+                        imageContainer.getChildren().add(tempLabel);
+                    }
+                    // Add the container with the tags and image to the grid
+                    GridPane.setHalignment(imageContainer, HPos.CENTER);
+                    GridPane.setValignment(imageContainer, VPos.CENTER);
+                    GridPane.setFillHeight(imageContainer, true);
+                    GridPane.setFillWidth(imageContainer, true);
+
+                    VBox labelContainer = new VBox();
+                    labelContainer.setAlignment(Pos.BOTTOM_CENTER);
+                    labelContainer.setPadding(new Insets(0, 0, 6, 0));
+
+                    Label tagLabel = new Label(tagOrder[tagIndex]);
+                    tagLabel.getStylesheets().add("/css/photoDoc.css");
+                    tagLabel.getStyleClass().add("photo-tag-label");
+                    tagLabel.setAlignment(Pos.CENTER);
+                    tagLabel.setMinWidth(100);
+                    tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
+
+                    labelContainer.setOnMouseClicked(event -> handleImageClick(photo));
+
+                    labelContainer.getChildren().add(tagLabel);
+
+                    imageContainer.getChildren().add(labelContainer);
+                    StackPane.setAlignment(tagLabel, Pos.BOTTOM_CENTER);
+
+
+                    if (i == 4 && !orderOfPhotos.contains(photo)) {
+                        orderOfPhotos.add(photo);
+                        orderOfPhotos.addAll(additionalImagesFromDatabase);
+                    }
+                    if (!orderOfPhotos.contains(photo)) {
+                        orderOfPhotos.add(photo);
+                    }
+
+
+                    gridPhoto.add(imageContainer, column, row);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+                tagIndex++;
+                column++;
+                if (column > 1) {
+                    column = 0;
+                    row++;
+                }
+
+        }
+        return photoGridContainer;
+    }
+
+    private Photo getPhotoWithTag(int tagIndex) {
+        for(Photo photo : imagesFromDatabase)
+        {
+            if(Objects.equals(photo.getTag(), tagOrder[tagIndex]))
+            {
+                return photo;
+
+            }
+        }
+        return null;
+    }
+
+    private Node fillAdditionalPhotoGrid(int pageIndex) {
+
+        gridPhoto.getChildren().clear();
+        int startIndex = (pageIndex-1) * MAX_PHOTOS;
+        int endIndex = Math.min(startIndex + MAX_PHOTOS, additionalImagesFromDatabase.size());
+        int column = 0;
+        int row = 0;
+
+        gridPhoto.widthProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
+        gridPhoto.heightProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
+
+        for (int i = startIndex; i < endIndex; i++) {
+            Photo photo = additionalImagesFromDatabase.get(i);
+
+            StackPane imageContainer = new StackPane();
+            // imageContainer.setSpacing(5); // Space between tags and image
+            imageContainer.setAlignment(Pos.CENTER);
+            ImageView imageView = new ImageView();
 
             try {
-                ImageView imageView = new ImageView();
                 if (Files.exists(Path.of(photo.getFilepath()))) {
                     Image image = new Image(new File(photo.getFilepath()).toURI().toString());
                     imageView.setImage(image);
 
-                    imageView.fitWidthProperty().bind(gridPhoto.widthProperty().divide(2.2)); // 2.2 to account for padding
-                    imageView.fitHeightProperty().bind(gridPhoto.heightProperty().divide(3.2)); // 3.2 to account for padding
+                    imageView.fitWidthProperty().bind(gridPhoto.widthProperty().divide(2.2));
+                    imageView.fitHeightProperty().bind(gridPhoto.heightProperty().divide(3.2));
                     imageView.setPreserveRatio(true);
 
                     GridPane.setMargin(imageView, new Insets(5));
-
-
-
-                    GridPane.setHalignment(imageView, HPos.CENTER);
-                    GridPane.setValignment(imageView, VPos.CENTER);
-                    GridPane.setFillHeight(imageView, true);
-                    GridPane.setFillWidth(imageView, true);
 
                     imageContainer.getChildren().add(imageView);
                 } else {
@@ -192,43 +292,57 @@ public class QCController implements Initializable {
                     tempLabel.getStylesheets().add("/css/general.css");
                     tempLabel.getStyleClass().add("label-image");
 
-                    GridPane.setHalignment(tempLabel, HPos.CENTER);
-                    GridPane.setValignment(tempLabel, VPos.CENTER);
-                    GridPane.setFillHeight(tempLabel, true);
-                    GridPane.setFillWidth(tempLabel, true);
-
-                    gridPhoto.add(tempLabel, column, row);
+                    imageContainer.getChildren().add(tempLabel);
                 }
+                // Add the container with the tags and image to the grid
+                GridPane.setHalignment(imageContainer, HPos.CENTER);
+                GridPane.setValignment(imageContainer, VPos.CENTER);
+                GridPane.setFillHeight(imageContainer, true);
+                GridPane.setFillWidth(imageContainer, true);
 
                 VBox labelContainer = new VBox();
                 labelContainer.setAlignment(Pos.BOTTOM_CENTER);
                 labelContainer.setPadding(new Insets(0,0,6,0));
 
-                Label tagLabel = new Label(photo.getTag());
+                Label tagLabel = new Label("Additional");
                 tagLabel.getStylesheets().add("/css/photoDoc.css");
                 tagLabel.getStyleClass().add("photo-tag-label");
                 tagLabel.setAlignment(Pos.CENTER);
                 tagLabel.setMinWidth(100);
                 tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
+                labelContainer.setOnMouseClicked(event -> handleImageClick(photo));
 
                 labelContainer.getChildren().add(tagLabel);
 
                 imageContainer.getChildren().add(labelContainer);
-                imageContainer.setOnMouseClicked(event -> handleImageClick(photo));
                 StackPane.setAlignment(tagLabel, Pos.BOTTOM_CENTER);
 
                 gridPhoto.add(imageContainer, column, row);
 
-                column++;
-                if (column > 1) {
-                    column = 0;
-                    row++;
-                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            tagIndex++;
+            column++;
+            if (column > 1) {
+                column = 0;
+                row++;
+            }
         }
         return photoGridContainer;
+    }
+
+    private Node fillPhotoGrid(int pageIndex) {
+        gridPhoto.getChildren().clear();
+
+        if(pageIndex == 0)
+        {
+            return fillFirstPhotoGrid(pageIndex);
+        }
+        else
+        {
+            return fillAdditionalPhotoGrid(pageIndex);
+        }
     }
 
     private void updateImageSizes() {
@@ -247,6 +361,7 @@ public class QCController implements Initializable {
                 System.out.println(controller);
                 if (controller instanceof ImageController) {
                     ((ImageController) controller).setImage(photo);
+                    ((ImageController) controller).setPhotoOrder(orderOfPhotos);
                 }
             });
         }

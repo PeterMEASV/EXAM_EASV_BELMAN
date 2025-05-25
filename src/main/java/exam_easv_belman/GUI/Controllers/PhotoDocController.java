@@ -64,11 +64,13 @@ public class PhotoDocController {
     private ProductModel productModel;
     private final String[] tagOrder = {"Front", "Back", "Left", "Right", "Top", "Additional"};
     private int tagIndex;
+    private ObservableList<Photo> orderOfPhotos;
 
 
     @FXML
     private void initialize() throws Exception {
         additionalImagesFromDatabase = FXCollections.observableArrayList();
+        orderOfPhotos = FXCollections.observableArrayList();
         productModel = new ProductModel();
         orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
         photoModel = new PhotoModel();
@@ -121,13 +123,11 @@ private void handleImageClick(Photo photo) {
     try {
         System.out.println("handleImageClick triggered with photo: " + photo);
         Navigator.getInstance().setRoot(View.IMG_VIEW, controller -> {
-            System.out.println(controller);
             if (controller instanceof ImageController) {
                 ImageController imageController = (ImageController) controller;
 
-                System.out.println("Controller is an instance of ImageController.");
-                imageController.setImage(photo);  // Ensure this method works
-                imageController.setPhoto(photo); // Set additional photo data
+                imageController.setImage(photo);
+                imageController.setPhotoOrder(orderOfPhotos);
             }
         });
     }
@@ -227,6 +227,7 @@ private void handleImageClick(Photo photo) {
             MenuItem menuItem = new MenuItem(productIndex);
             menuItem.setOnAction(event -> {
                 try {
+                    orderOfPhotos.clear();
                     SessionManager.getInstance().setIsProduct(true);
                     SessionManager.getInstance().setCurrentProductNumber(product.getProduct_number());
                     setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
@@ -353,6 +354,18 @@ private void handleImageClick(Photo photo) {
 
                     imageContainer.getChildren().add(labelContainer);
                     StackPane.setAlignment(tagLabel, Pos.BOTTOM_CENTER);
+
+
+                    if(i==4 && !orderOfPhotos.contains(photo))
+                    {
+                        orderOfPhotos.add(photo);
+                        orderOfPhotos.addAll(additionalImagesFromDatabase);
+                    }
+                    if(!orderOfPhotos.contains(photo))
+                    {
+                        orderOfPhotos.add(photo);
+                    }
+
 
                     gridPhoto.add(imageContainer, column, row);
 

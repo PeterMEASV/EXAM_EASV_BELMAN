@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -10,9 +11,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="382.0" prefWidth="754.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.ImageController">
+<VBox prefHeight="437.0" prefWidth="754.0" style="-fx-background-color: #004b88;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.ImageController">
    <children>
-      <HBox alignment="CENTER">
+      <HBox alignment="CENTER" style="-fx-background-color: white;">
          <children>
             <ImageView fitHeight="54.0" fitWidth="54.0" pickOnBounds="true" preserveRatio="true" smooth="false">
                <image>
@@ -42,10 +43,10 @@
             </HBox>
          </children>
       </HBox>
-      <HBox fx:id="rootHBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="375.0" minWidth="578.0" prefHeight="461.0" prefWidth="691.0" style="-fx-background-color: #e3e3e3;" VBox.vgrow="ALWAYS">
+      <HBox fx:id="rootHBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="329.0" minWidth="578.0" prefHeight="329.0" prefWidth="754.0" style="-fx-background-color: #e3e3e3;" VBox.vgrow="ALWAYS">
          <children>
             <ImageView fx:id="imageView" fitHeight="374.0" fitWidth="577.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
-            <VBox fx:id="sidebarVbox" alignment="CENTER" prefHeight="375.0" prefWidth="181.0" style="-fx-background-color: #004b88;" HBox.hgrow="ALWAYS">
+            <VBox fx:id="sidebarVbox" alignment="CENTER" prefHeight="357.0" prefWidth="177.0" style="-fx-background-color: #004b88;" HBox.hgrow="ALWAYS">
                <children>
                   <Region layoutX="10.0" layoutY="178.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                   <Button fx:id="btnConfirm" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: #004b88;" styleClass="side-button" stylesheets="@../css/general.css">
@@ -53,12 +54,33 @@
                         <Insets />
                      </VBox.margin>
                   </Button>
-                  <HBox prefHeight="22.0" prefWidth="177.0" />
+                  <Region layoutX="10.0" layoutY="145.0" prefHeight="200.0" prefWidth="200.0" />
                   <Button fx:id="btnComment" mnemonicParsing="false" onAction="#onHandleComment" style="-fx-background-color: #004b88;" styleClass="side-button" stylesheets="@../css/general.css" />
                   <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                   <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#handleDelete" style="-fx-background-color: #004b88;" styleClass="side-button" stylesheets="@../css/general.css" />
                   <Region layoutX="10.0" layoutY="303.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                </children></VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" maxHeight="75.0" prefHeight="83.0" prefWidth="754.0" style="-fx-background-color: #004b88;" VBox.vgrow="ALWAYS">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" />
+            <Button fx:id="btnLeft" alignment="CENTER" mnemonicParsing="false" onAction="#onHandleLeft" style="-fx-background-color: #004b88;" styleClass="side-button" stylesheets="@../css/general.css">
+               <HBox.margin>
+                  <Insets top="15.0" />
+               </HBox.margin>
+            </Button>
+            <Label fx:id="lblInfo" maxHeight="1.7976931348623157E308" text="This is a label lmao" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnRight" mnemonicParsing="false" onAction="#onHandleRight" style="-fx-background-color: #004b88;" styleClass="side-button" stylesheets="@../css/general.css">
+               <HBox.margin>
+                  <Insets top="15.0" />
+               </HBox.margin>
+            </Button>
+            <Region prefHeight="200.0" prefWidth="200.0" />
          </children>
       </HBox>
    </children>

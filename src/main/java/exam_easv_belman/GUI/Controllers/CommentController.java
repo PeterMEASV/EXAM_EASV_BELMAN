@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -57,6 +58,10 @@ public class CommentController implements Initializable {
         AlertHelper.showConfirmationAlert("Confirmation", "Are you sure you wish to add this comment to this photo?", () -> {
             try {
                 photoModel.addCommentToPhoto(txtComment.getText(), photo);
+                photo.setComment(txtComment.getText());
+                Stage stage = (Stage) txtComment.getScene().getWindow();
+                stage.close();
+
             } catch (SQLException e) {
                 AlertHelper.showAlert("Error", "Failed to add comment to photo.", Alert.AlertType.ERROR);
             }
