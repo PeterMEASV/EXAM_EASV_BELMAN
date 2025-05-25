@@ -4,11 +4,15 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -49,7 +53,7 @@ public class PdfGeneratorUtil {
         PdfWriter writer = new PdfWriter(filePath);
         PdfDocument pdfDocument = new PdfDocument(writer);
         Document document = new Document(pdfDocument, PageSize.A4);
-        document.setMargins(20, 20, 20, 20);
+        //document.setMargins(20, 20, 20, 20);
 
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
@@ -68,14 +72,6 @@ public class PdfGeneratorUtil {
         // Unique Operators
         document.add(new Paragraph("Operators: " + opName).setFont(font).setFontSize(12));
 
-        // QC Signature
-        if (qcSignaturePath != null && !qcSignaturePath.isEmpty()) {
-            ImageData imageData = ImageDataFactory.create(qcSignaturePath);
-            Image signature = new Image(imageData)
-                    .scaleToFit(100, 50)
-                    .setHorizontalAlignment(com.itextpdf.layout.properties.HorizontalAlignment.LEFT);
-            document.add(signature);
-        }
 
         // General Comments
         document.add(new Paragraph("General Comments: ").setFont(font).setFontSize(12).setItalic());
@@ -142,14 +138,79 @@ public class PdfGeneratorUtil {
             document.add(new Paragraph(" "));
         }
 
+        /*
         // FOOTER
         document.add(new Paragraph("Report Generated for: " + email)
                 .setFont(font).setFontSize(10).setTextAlignment(TextAlignment.RIGHT).setMarginTop(20));
+        // QC Signature
+        if (qcSignaturePath != null && !qcSignaturePath.isEmpty()) {
+            ImageData imageData = ImageDataFactory.create(qcSignaturePath);
+            Image signature = new Image(imageData)
+                    .scaleToFit(300, 150)
+                    .setHorizontalAlignment(com.itextpdf.layout.properties.HorizontalAlignment.LEFT);
+            document.add(signature);
+        }
 
-        // CLOSE DOCUMENT
+         */
+        addFooter(pdfDocument, email, qcSignaturePath);
+
+
         document.close();
     }
 
+    private static void addFooter(PdfDocument pdfDocument, String email, String qcSignaturePath) {
+        PdfPage page = pdfDocument.getLastPage();
+        Rectangle pageSize = page.getPageSize();
+        Canvas canvas = new Canvas(page, pageSize);
+
+        // Add the footer text
+        Paragraph footerText = new Paragraph("Report Generated for: " + email)
+                .setFontSize(10)
+                .setTextAlignment(TextAlignment.RIGHT);
+
+        // Position footer text at the bottom-right of the page
+        canvas.showTextAligned(footerText,
+                pageSize.getWidth() - 36, //right margin offset
+                30, // bottom edge
+                TextAlignment.RIGHT);
+
+        // Add QC Signature, if present
+        if (qcSignaturePath != null && !qcSignaturePath.isEmpty()) {
+            try {
+                // Create the QC signature image
+                ImageData imageData = ImageDataFactory.create(qcSignaturePath);
+                Image signature = new Image(imageData).scaleToFit(100, 50); // Scale the image (adjust size as needed)
+
+                // Set "Signed by:" text
+                Paragraph signedByParagraph = new Paragraph("Signed by:")
+                        .setFontSize(10)
+                        .setTextAlignment(TextAlignment.LEFT);
+
+                // Define positions for "Signed by:" text and the QC signature
+                float marginLeft = 36; // Starting left margin for both
+                float signatureY = 15; // Y position for both elements (at the bottom of the page)
+                float textX = marginLeft; // X position for "Signed by:" text
+                float signatureX = marginLeft + 50; // X position for the signature (offset based on text width)
+
+                // Draw "Signed by:" text
+                canvas.showTextAligned(signedByParagraph,
+                        textX, // Position to the left of the signature
+                        signatureY + 15, // Slight alignment adjustment if needed
+                        TextAlignment.LEFT);
+
+                // Position the QC signature to the right of "Signed by:"
+                signature.setFixedPosition(signatureX, signatureY); // X defines right of text
+                canvas.add(signature);
+
+            } catch (Exception e) {
+                System.err.println("Error inserting QC signature: " + e.getMessage());
+            }
+        }
+
+
+        // Close canvas after drawing
+        canvas.close();
+    }
 
 
 
