@@ -28,6 +28,8 @@ import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SendViewController implements Initializable {
 
@@ -134,17 +136,22 @@ public class SendViewController implements Initializable {
 
 
     public void handleSend(ActionEvent actionEvent) throws Exception {
-        /*
-        String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
-        PdfGeneratorUtil.generatePdf(filePath, txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), false);
-        File generatedPDF = new File(filePath);
-        gMailer.sendMail(txtOrderNumber.getText(), "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: " + txtOrderNumber.getText(), txtEmail.getText(), generatedPDF);
-        System.out.println(generatedPDF.delete());
-        */
+        // Check if the email is valid before sending
+        if (!isValidEmail(txtEmail.getText())) {
+            AlertHelper.showAlert(
+                    "Error",
+                    "Please input a valid email address.",
+                    Alert.AlertType.ERROR
+            );
+            return;
+        }
+        
 
+        // File path for the PDF to be generated
         String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
         File generatedPDF = new File(filePath);
 
+        // Generate the QC Report as a PDF
         QCReportManager qcReportManager = new QCReportManager();
         qcReportManager.generateQCReportPDF(
                 filePath,
@@ -154,7 +161,7 @@ public class SendViewController implements Initializable {
         );
 
 
-        // Send the mail with the generated PDF attached
+        // If valid, send the mail with the generated PDF attached
         gMailer.sendMail(
                 txtOrderNumber.getText(),
                 "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: "
@@ -162,11 +169,47 @@ public class SendViewController implements Initializable {
                 txtEmail.getText(),
                 generatedPDF
         );
+        AlertHelper.showAlert("HUURRRRAYY", "Email sent successfully!", Alert.AlertType.INFORMATION);
 
-        // Delete the generated PDF after sending the email
+
+
+        // Delete the PDF after sending the email
         boolean deleted = generatedPDF.delete();
         System.out.println("File deleted: " + deleted);
     }
+
+    private boolean isValidEmail(String email) {
+        // Regex for validating the email address structure
+        String regex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+
+        // If the email does not match the structure, return false.
+        if (!matcher.matches()) {
+            return false;
+        }
+
+        // List of most common email domains
+        String[] commonDomains = {
+                "gmail.com", "yahoo.com", "hotmail.com",
+                "aol.com", "msn.com", "outlook.com", "easv365.dk"
+        };
+
+        // Extract the domain from the email address
+        String domain = email.substring(email.indexOf('@') + 1);
+
+        // Check if the domain is in the list of common domains
+        for (String commonDomain : commonDomains) {
+            if (domain.equalsIgnoreCase(commonDomain)) {
+                return true;
+            }
+        }
+
+        // If the domain is not in the list, return false.
+        return false;
+    }
+
+
 
     @FXML
     private void handleLog(ActionEvent actionEvent) {

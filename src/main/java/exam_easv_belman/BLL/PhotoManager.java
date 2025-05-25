@@ -1,13 +1,9 @@
 package exam_easv_belman.BLL;
 
 import exam_easv_belman.BE.Photo;
-import exam_easv_belman.BE.Product;
-import exam_easv_belman.BE.Tag;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.DAL.IPhotoDataAccess;
-import exam_easv_belman.DAL.ITagDataAccess;
 import exam_easv_belman.DAL.PhotoDAO;
-import exam_easv_belman.DAL.TagDAO;
 import javafx.collections.ObservableList;
 
 import java.awt.image.BufferedImage;
@@ -16,12 +12,11 @@ import java.util.List;
 
 public class PhotoManager {
     private IPhotoDataAccess photoDataAccess;
-    private ITagDataAccess tagDataAccess;
+
 
     public PhotoManager() throws Exception {
         try {
             photoDataAccess = new PhotoDAO();
-            tagDataAccess = new TagDAO();
         } catch (Exception e) {
             throw new Exception();
             //TODO exception handling
@@ -51,9 +46,6 @@ public class PhotoManager {
         photoDataAccess.addCommentToPhoto(comment, photo);
     }
 
-    public void addTagToPhoto(Photo photo, Tag tag) throws SQLException {
-        tagDataAccess.addTagToPhoto(photo, tag);
-    }
 
     //Probably not the currect way of doing this
     public User getUserById(int userId) throws Exception {

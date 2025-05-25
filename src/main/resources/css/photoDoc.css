@@ -30,6 +30,13 @@
     -fx-cursor: hand;
 }
 
+.pagination .pagination-control .left-arrow,
+.pagination .pagination-control .right-arrow {
+    -fx-background-color: #f4f4f4; /* or any color you want */
+}
+
+
+
 .photo-tag-label {
     -fx-background-color: rgba(0, 0, 0, 0.7);
     -fx-text-fill: white;

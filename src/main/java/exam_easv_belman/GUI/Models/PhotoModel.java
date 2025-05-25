@@ -1,10 +1,8 @@
 package exam_easv_belman.GUI.Models;
 
 import exam_easv_belman.BE.Photo;
-import exam_easv_belman.BE.Tag;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.PhotoManager;
-import exam_easv_belman.BLL.TagManager;
 import javafx.collections.ObservableList;
 
 import java.awt.image.BufferedImage;
@@ -13,7 +11,6 @@ import java.util.List;
 
 public class PhotoModel {
     private PhotoManager photoManager;
-    private TagManager tagManager;
 
 
     public PhotoModel() {
@@ -46,12 +43,6 @@ public class PhotoModel {
         photoManager.addCommentToPhoto(comment, photo);
     }
 
-    public List<Tag> getTagsForPhoto(Photo photo) throws Exception {
-        return tagManager.getTagsForPhoto(photo);
-    }
 
-    public void addTagToPhoto(Photo photo, Tag tag) throws Exception {
-        photoManager.addTagToPhoto(photo, tag);
-    }
 
 }

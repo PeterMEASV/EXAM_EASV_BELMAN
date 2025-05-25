@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="625.0" prefWidth="918.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.PhotoDocController">
+<VBox prefHeight="625.0" prefWidth="918.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.PhotoDocController">
    <children>
       <HBox>
          <children>
@@ -63,7 +63,7 @@
       <VBox alignment="CENTER" spacing="10" VBox.vgrow="ALWAYS">
          <children>
             <StackPane fx:id="photoGridContainer" VBox.vgrow="ALWAYS">
-            <GridPane fx:id="gridPhoto" alignment="CENTER" prefHeight="700.0" prefWidth="675.0" vgap="2" VBox.vgrow="ALWAYS">
+            <GridPane fx:id="gridPhoto" alignment="CENTER" gridLinesVisible="true" prefHeight="700.0" prefWidth="675.0" vgap="2" VBox.vgrow="ALWAYS">
                <columnConstraints>
                   <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
