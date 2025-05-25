@@ -145,7 +145,7 @@ public class SendViewController implements Initializable {
             );
             return;
         }
-        
+
 
         // File path for the PDF to be generated
         String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";

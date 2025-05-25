@@ -53,7 +53,7 @@
                               <Insets left="-20.0" />
                            </HBox.margin>
                          </MenuButton>
-                        <MenuButton fx:id="DRPDown" mnemonicParsing="false" text="Fancy name">
+                        <MenuButton fx:id="DRPDown" mnemonicParsing="false" text="Select Workspace">
                            <items>
                               <MenuItem mnemonicParsing="false">
                                  <graphic>
@@ -74,6 +74,9 @@
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
+                           <font>
+                              <Font name="Arial" size="14.0" />
+                           </font>
                         </MenuButton>
                      </children>
                   </HBox>

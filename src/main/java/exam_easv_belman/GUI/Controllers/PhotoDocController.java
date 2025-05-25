@@ -35,6 +35,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 
 public class PhotoDocController {
+    public MenuButton DRPDown;
     @FXML
     private Text txtOrderNumber; // THIS CAN ALSO HOLD THE PRODUCT NUMBER, IF USER CHOOSES SO
     @FXML
@@ -48,8 +49,7 @@ public class PhotoDocController {
     private GridPane gridPhoto;
 
     private PhotoModel photoModel;
-    @FXML
-    private Button btnQC;
+
 
     private static final int MAX_PHOTOS = 6;
 
@@ -80,10 +80,11 @@ public class PhotoDocController {
 
         User currentUser = SessionManager.getInstance().getCurrentUser();
         if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
-            btnQC.setVisible(true);
+            DRPDown.setVisible(true);
         } else {
-            btnQC.setVisible(false);
+            DRPDown.setVisible(false);
         }
+
     }
 
     private void handleEmptyImage(String tag) {
@@ -207,14 +208,6 @@ private void handleImageClick(Photo photo) {
         }
 
 
-    }
-
-    public void handleQC(ActionEvent actionEvent){
-        try {
-            Navigator.getInstance().goTo(View.QCView);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void populateMenu() throws SQLException {
@@ -512,4 +505,27 @@ private void handleImageClick(Photo photo) {
         }
     }
 
+    public void handleUserManagement(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ADMIN);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleOrder(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ORDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleQC(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.QCView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

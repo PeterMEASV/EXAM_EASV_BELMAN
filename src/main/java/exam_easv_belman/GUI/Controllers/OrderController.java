@@ -32,6 +32,9 @@ public class OrderController {
     @FXML
     private TextField OrderNumber;
 
+    private final String ORDER_REGEX = "ORD-\\d{4}(-\\d{3})?";
+
+
     //TODO take orders from db not just these hardcoded values
     private final List<String> orders = Arrays.asList("1001", "1002", "1003", "ORD-1001");
     private List<Product> products;
@@ -67,6 +70,22 @@ public class OrderController {
         } else {
             DRPDown.setVisible(false);
         }
+
+        OrderNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches(ORDER_REGEX)) {
+                // Apply "valid" CSS class
+                btnSearch.getStyleClass().remove("util-button-invalid");
+                if (!btnSearch.getStyleClass().contains("util-button-valid"))
+                    btnSearch.getStyleClass().add("util-button-valid");
+            } else {
+                // Apply "invalid" CSS class
+                btnSearch.getStyleClass().remove("util-button-valid");
+                if (!btnSearch.getStyleClass().contains("util-button-invalid"))
+                    btnSearch.getStyleClass().add("util-button-invalid");
+            }
+        });
+
+
 
 
     }

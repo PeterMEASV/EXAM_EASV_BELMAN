@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -33,6 +34,9 @@
                      <font>
                         <Font size="24.0" />
                      </font>
+                     <HBox.margin>
+                        <Insets left="150.0" />
+                     </HBox.margin>
                   </Text>
                   <MenuButton fx:id="btnProduct" mnemonicParsing="false" prefHeight="55.0" prefWidth="103.0" style="-fx-font-size: 24; -fx-text-fill: white;" stylesheets="@../css/general.css" text="XXX">
                      <font>
@@ -45,17 +49,38 @@
                         <Insets left="-12.0" top="3.0" />
                      </padding>
                   </MenuButton>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <Button fx:id="btnQC" mnemonicParsing="false" onAction="#handleQC" text="QC">
+                  <MenuButton fx:id="DRPDown" mnemonicParsing="false" style="-fx-text-fill: white;" stylesheets="@../css/general.css" text="Select Workspace">
+                     <items>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnQC" mnemonicParsing="false" onAction="#handleQC" text="QC" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnUser" mnemonicParsing="false" onAction="#handleUserManagement" text="User" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <Button fx:id="btnOrder" mnemonicParsing="false" onAction="#handleOrder" text="ORDER" />
+                           </graphic>
+                        </MenuItem>
+                     </items>
+                     <font>
+                        <Font name="Arial" size="14.0" />
+                     </font>
                      <HBox.margin>
-                        <Insets right="5.0" />
+                        <Insets />
                      </HBox.margin>
-                  </Button>
+                  </MenuButton>
+                  <Region HBox.hgrow="ALWAYS" />
                   <Button fx:id="btnPrev" mnemonicParsing="false" onAction="#handleReturn" styleClass="side-button" stylesheets="@../css/general.css">
                      <HBox.margin>
                         <Insets right="10.0" />
                      </HBox.margin>
                   </Button>
+                  <Region />
                </children>
             </HBox>
          </children>

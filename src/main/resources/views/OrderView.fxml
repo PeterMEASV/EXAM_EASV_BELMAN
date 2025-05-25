@@ -34,7 +34,7 @@
                         <Font size="24.0" />
                      </font>
                   </Text>
-                  <MenuButton fx:id="DRPDown" mnemonicParsing="false" text="Fancy name">
+                  <MenuButton fx:id="DRPDown" mnemonicParsing="false" text="Select Workspace">
                     <items>
                         <MenuItem mnemonicParsing="false">
                            <graphic>
@@ -54,6 +54,9 @@
                      <StackPane.margin>
                         <Insets left="300.0" />
                      </StackPane.margin>
+                     <font>
+                        <Font name="Arial" size="14.0" />
+                     </font>
                   </MenuButton>
                </children>
             </StackPane>
