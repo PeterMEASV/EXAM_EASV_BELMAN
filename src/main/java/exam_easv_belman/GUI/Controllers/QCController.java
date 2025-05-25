@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -23,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.io.File;
@@ -162,6 +164,9 @@ public class QCController implements Initializable {
         gridPhoto.heightProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
         for (int i = startIndex; i < endIndex && i < imagesFromDatabase.size(); i++) {
             Photo photo = imagesFromDatabase.get(i);
+            StackPane imageContainer = new StackPane();
+            imageContainer.setAlignment(Pos.CENTER);
+
             try {
                 ImageView imageView = new ImageView();
                 if (Files.exists(Path.of(photo.getFilepath()))) {
@@ -174,14 +179,14 @@ public class QCController implements Initializable {
 
                     GridPane.setMargin(imageView, new Insets(5));
 
-                    imageView.setOnMouseClicked(event -> handleImageClick(photo));
+
 
                     GridPane.setHalignment(imageView, HPos.CENTER);
                     GridPane.setValignment(imageView, VPos.CENTER);
                     GridPane.setFillHeight(imageView, true);
                     GridPane.setFillWidth(imageView, true);
 
-                    gridPhoto.add(imageView, column, row);
+                    imageContainer.getChildren().add(imageView);
                 } else {
                     Label tempLabel = new Label("Image not found");
                     tempLabel.getStylesheets().add("/css/general.css");
@@ -194,6 +199,25 @@ public class QCController implements Initializable {
 
                     gridPhoto.add(tempLabel, column, row);
                 }
+
+                VBox labelContainer = new VBox();
+                labelContainer.setAlignment(Pos.BOTTOM_CENTER);
+                labelContainer.setPadding(new Insets(0,0,6,0));
+
+                Label tagLabel = new Label(photo.getTag());
+                tagLabel.getStylesheets().add("/css/photoDoc.css");
+                tagLabel.getStyleClass().add("photo-tag-label");
+                tagLabel.setAlignment(Pos.CENTER);
+                tagLabel.setMinWidth(100);
+                tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
+
+                labelContainer.getChildren().add(tagLabel);
+
+                imageContainer.getChildren().add(labelContainer);
+                imageContainer.setOnMouseClicked(event -> handleImageClick(photo));
+                StackPane.setAlignment(tagLabel, Pos.BOTTOM_CENTER);
+
+                gridPhoto.add(imageContainer, column, row);
 
                 column++;
                 if (column > 1) {

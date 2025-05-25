@@ -115,6 +115,8 @@ public class LoginController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         enterKeyListeners();
         handleUsername(null);
+        btnTogglePassword.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/OpenEye.png")))));
+        btnTogglePassword.setStyle("-fx-background-color: transparent;");
 
         stackCam.prefWidthProperty().bind(vBoxQR.widthProperty());
         stackCam.prefHeightProperty().bind(vBoxQR.heightProperty());
