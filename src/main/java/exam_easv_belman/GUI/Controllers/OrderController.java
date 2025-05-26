@@ -49,6 +49,7 @@ public class OrderController {
 
     @FXML
     private void initialize() throws Exception {
+        btnSearch.getStyleClass().add("util-button-invalid");
         productModel = new ProductModel();
         productNames = new ArrayList<>();
         products = productModel.getAvailableProducts();

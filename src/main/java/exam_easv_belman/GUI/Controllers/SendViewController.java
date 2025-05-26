@@ -161,7 +161,7 @@ public class SendViewController implements Initializable {
         );
 
 
-        // If valid, send the mail with the generated PDF attached
+
         gMailer.sendMail(
                 txtOrderNumber.getText(),
                 "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: "
@@ -169,7 +169,7 @@ public class SendViewController implements Initializable {
                 txtEmail.getText(),
                 generatedPDF
         );
-        AlertHelper.showAlert("HUURRRRAYY", "Email sent successfully!", Alert.AlertType.INFORMATION);
+        AlertHelper.showAlert("Email sent", "Email sent successfully!", Alert.AlertType.INFORMATION);
 
 
 
