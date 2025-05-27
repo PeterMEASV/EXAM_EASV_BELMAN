@@ -46,6 +46,7 @@ public class OrderDAO implements IOrderDataAccess {
             ps.setString(2, orderNumber);
 
             ps.executeUpdate();
+            System.out.println("coment added?");
         } catch (SQLException e) {
             AlertHelper.showAlert("DB call error", "Could not add comment to order", Alert.AlertType.ERROR);
         }
