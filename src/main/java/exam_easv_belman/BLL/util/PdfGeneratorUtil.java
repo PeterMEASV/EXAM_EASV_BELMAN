@@ -9,6 +9,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -32,6 +33,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.imageio.*;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import java.io.File;
 
 public class PdfGeneratorUtil {
 
@@ -49,8 +57,10 @@ public class PdfGeneratorUtil {
                                    String qcName,
                                    String qcSignaturePath,
                                    String opName) throws Exception {
-
-        PdfWriter writer = new PdfWriter(filePath);
+        // Configure PDF writer with compression
+        WriterProperties writerProperties = new WriterProperties()
+                .setCompressionLevel(CompressionConstants.BEST_COMPRESSION);
+        PdfWriter writer = new PdfWriter(filePath, writerProperties);
         PdfDocument pdfDocument = new PdfDocument(writer);
         Document document = new Document(pdfDocument, PageSize.A4);
         //document.setMargins(20, 20, 20, 20);
@@ -96,10 +106,41 @@ public class PdfGeneratorUtil {
                     .setUnderline());
 
             // Add Photos and Related Data
+
             for (Photo photo : productPhotos) {
                 try {
-                    // Add Photo Image
-                    ImageData imageData = ImageDataFactory.create(photo.getFilepath());
+                    // Read and compress the image
+                    BufferedImage originalImage = ImageIO.read(new File(photo.getFilepath()));
+
+                    // Calculate new dimensions while maintaining aspect ratio
+                    int targetWidth = 800;  // You can adjust these values
+                    int targetHeight = (int) (originalImage.getHeight() * (targetWidth / (double) originalImage.getWidth()));
+
+                    // Create compressed version
+                    BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+                    Graphics2D g = resizedImage.createGraphics();
+                    g.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+                    g.dispose();
+
+                    // Save to temporary file with compression
+                    File tempFile = File.createTempFile("compressed", ".jpg");
+                    tempFile.deleteOnExit();
+                    
+                    // Set up the image writer with compression
+                    ImageWriter imgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
+                    ImageWriteParam imgWriteParam = imgWriter.getDefaultWriteParam();
+                    imgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                    imgWriteParam.setCompressionQuality(0.5f);
+
+                    // Write the compressed image
+                    try (ImageOutputStream ios = ImageIO.createImageOutputStream(tempFile)) {
+                        imgWriter.setOutput(ios);
+                        imgWriter.write(null, new IIOImage(resizedImage, null, null), imgWriteParam);
+                    }
+                    imgWriter.dispose();
+
+                    // Add the compressed image to PDF
+                    ImageData imageData = ImageDataFactory.create(tempFile.toPath().toString());
                     Image image = new Image(imageData)
                             .scaleToFit(350, 250)
                             .setHorizontalAlignment(com.itextpdf.layout.properties.HorizontalAlignment.CENTER);
@@ -130,7 +171,11 @@ public class PdfGeneratorUtil {
                     // Add spacing after each photo
                     document.add(new Paragraph(" "));
                 } catch (Exception e) {
-                    document.add(new Paragraph("Failed to display photo.").setFontColor(ColorConstants.RED).setFont(font).setFontSize(10));
+                    document.add(new Paragraph("Failed to display photo.")
+                            .setFontColor(ColorConstants.RED)
+                            .setFont(font)
+                            .setFontSize(10));
+                    e.printStackTrace();
                 }
             }
 
