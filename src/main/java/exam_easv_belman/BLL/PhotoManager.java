@@ -61,5 +61,9 @@ public class PhotoManager {
         throw new Exception("User not found for ID: " + userId);
     }
 
+    public void changeVeirfyState(Photo photo, int approval) throws SQLException {
+        photoDataAccess.changeVeirfyState(photo, approval);
+    }
+
 
 }

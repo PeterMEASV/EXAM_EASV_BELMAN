@@ -14,21 +14,28 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -206,11 +213,48 @@ public class QCController implements Initializable {
                     Label tagLabel = new Label(tagOrder[tagIndex]);
                     tagLabel.getStylesheets().add("/css/photoDoc.css");
                     tagLabel.getStyleClass().add("photo-tag-label");
+                    tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
+
                     tagLabel.setAlignment(Pos.CENTER);
                     tagLabel.setMinWidth(100);
                     tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
 
-                    labelContainer.setOnMouseClicked(event -> handleImageClick(photo));
+                    //Approve or deny logic implementation
+                    ContextMenu contextMenu = new ContextMenu();
+                    MenuItem approve = new MenuItem("Approve");
+                    approve.setOnAction(event -> {
+                        try {
+                            photoModel.changeVeirfyState(photo, 2);
+                            photo.setVerifyStatus(2);
+                            tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
+
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                    MenuItem deny = new MenuItem("Deny");
+                    deny.setOnAction(event -> {
+                        try {
+                            photoModel.changeVeirfyState(photo,3);
+                            photo.setVerifyStatus(3);
+                            tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
+                            openCommentView(photo);
+
+                        } catch (SQLException | IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+
+                    contextMenu.getItems().addAll(approve, deny);
+
+                    labelContainer.setOnMouseClicked(event -> {
+                        if(event.getButton() == MouseButton.PRIMARY) {
+                            handleImageClick(photo);
+                        }
+                        else if (event.getButton() == MouseButton.SECONDARY) {
+                            contextMenu.show(labelContainer, event.getScreenX(), event.getScreenY());
+                        }
+                    });
 
                     labelContainer.getChildren().add(tagLabel);
 
@@ -242,6 +286,19 @@ public class QCController implements Initializable {
 
         }
         return photoGridContainer;
+    }
+
+    private void openCommentView(Photo photo) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/CommentView.fxml"));
+        Parent root = fxmlLoader.load();
+        CommentController controller = fxmlLoader.getController();
+        controller.setPhoto(photo);
+
+        Stage stage = new Stage();
+        stage.setTitle("Add comment");
+        stage.setScene(new Scene(root));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
     }
 
     private Photo getPhotoWithTag(int tagIndex) {
@@ -307,10 +364,48 @@ public class QCController implements Initializable {
                 Label tagLabel = new Label("Additional");
                 tagLabel.getStylesheets().add("/css/photoDoc.css");
                 tagLabel.getStyleClass().add("photo-tag-label");
+                tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
+
                 tagLabel.setAlignment(Pos.CENTER);
                 tagLabel.setMinWidth(100);
                 tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
-                labelContainer.setOnMouseClicked(event -> handleImageClick(photo));
+
+                //Approve or deny logic implementation
+                ContextMenu contextMenu = new ContextMenu();
+                MenuItem approve = new MenuItem("Approve");
+                approve.setOnAction(event -> {
+                    try {
+                        photoModel.changeVeirfyState(photo, 2);
+                        photo.setVerifyStatus(2);
+                        tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
+
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                MenuItem deny = new MenuItem("Deny");
+                deny.setOnAction(event -> {
+                    try {
+                        photoModel.changeVeirfyState(photo,3);
+                        photo.setVerifyStatus(3);
+                        tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
+                        openCommentView(photo);
+
+                    } catch (SQLException | IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+                contextMenu.getItems().addAll(approve, deny);
+
+                labelContainer.setOnMouseClicked(event -> {
+                    if(event.getButton() == MouseButton.PRIMARY) {
+                        handleImageClick(photo);
+                    }
+                    else if (event.getButton() == MouseButton.SECONDARY) {
+                        contextMenu.show(labelContainer, event.getScreenX(), event.getScreenY());
+                    }
+                });
 
                 labelContainer.getChildren().add(tagLabel);
 
@@ -443,4 +538,18 @@ public class QCController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    private String getTagStyleBasedOnVerification(Photo photo) {
+            int verifyState = photo.getVerifyStatus();
+            if (verifyState == 2) {
+                return "-fx-background-color: rgba(26,110,26,0.75)";
+            }
+
+            else if (verifyState == 3) {
+                return "-fx-background-color: rgba(159,5,5,0.75)";
+            }
+
+            return "-fx-background-color: rgba(0, 0, 0, 0.7);";
+    }
+
 }

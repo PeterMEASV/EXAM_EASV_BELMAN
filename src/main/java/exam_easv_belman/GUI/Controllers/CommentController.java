@@ -1,7 +1,9 @@
 package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Photo;
+import exam_easv_belman.BE.Role;
 import exam_easv_belman.GUI.Models.PhotoModel;
+import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -43,6 +45,11 @@ public class CommentController implements Initializable {
                 countLabel.setText(newValue.length() + "/300");
             }
         });
+
+        if(SessionManager.getInstance().getCurrentUser().getRole() == Role.OPERATOR)
+        {
+            txtComment.setEditable(false);
+        }
     }
 
     public void setPhoto(Photo photo) {
@@ -55,16 +62,20 @@ public class CommentController implements Initializable {
 
     @FXML
     private void handleConfirm(ActionEvent actionEvent) {
-        AlertHelper.showConfirmationAlert("Confirmation", "Are you sure you wish to add this comment to this photo?", () -> {
-            try {
-                photoModel.addCommentToPhoto(txtComment.getText(), photo);
-                photo.setComment(txtComment.getText());
-                Stage stage = (Stage) txtComment.getScene().getWindow();
-                stage.close();
+        if (SessionManager.getInstance().getCurrentUser().getRole() == Role.QC) {
+            AlertHelper.showConfirmationAlert("Confirmation", "Are you sure you wish to add this comment to this photo?", () -> {
+                try {
+                    photoModel.addCommentToPhoto(txtComment.getText(), photo);
+                    photo.setComment(txtComment.getText());
+                    Stage stage = (Stage) txtComment.getScene().getWindow();
+                    stage.close();
 
-            } catch (SQLException e) {
-                AlertHelper.showAlert("Error", "Failed to add comment to photo.", Alert.AlertType.ERROR);
-            }
-        });
+                } catch (SQLException e) {
+                    AlertHelper.showAlert("Error", "Failed to add comment to photo.", Alert.AlertType.ERROR);
+                }
+            });
+        }
+        Stage stage = (Stage) txtComment.getScene().getWindow();
+        stage.close();
     }
 }

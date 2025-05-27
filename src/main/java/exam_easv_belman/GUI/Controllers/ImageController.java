@@ -14,11 +14,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -29,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class ImageController implements Initializable {
@@ -113,16 +113,44 @@ public class ImageController implements Initializable {
         setButtonGraphic(btnComment, "/images/icon-note.png");
         setButtonGraphic(btnLeft, "/images/icon-left.png");
         setButtonGraphic(btnRight, "/images/icon-right.png");
-        if(SessionManager.getInstance().getCurrentUser().getRole() == Role.OPERATOR)
-        {
-            btnComment.setVisible(false);
-        }
         try {
             photoModel = new PhotoModel(); // Initialize with BLL layer
 
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Failed to initialize PhotoModel", Alert.AlertType.ERROR);
         }
+
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem approve = new MenuItem("Approve");
+        approve.setOnAction(event -> {
+            try {
+                photoModel.changeVeirfyState(photo, 2);
+                photo.setVerifyStatus(2);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        MenuItem deny = new MenuItem("Deny");
+        deny.setOnAction(event -> {
+            try {
+                photoModel.changeVeirfyState(photo,3);
+                photo.setVerifyStatus(3);
+                onHandleComment(null);
+
+            } catch (SQLException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        contextMenu.getItems().addAll(approve, deny);
+
+        imageView.setOnMouseClicked(event -> {
+            if(event.getButton() == MouseButton.SECONDARY && SessionManager.getInstance().getCurrentUser().getRole() == Role.QC)
+            {
+                contextMenu.show(imageView, event.getScreenX(), event.getScreenY());
+            }
+        });
     }
 
 

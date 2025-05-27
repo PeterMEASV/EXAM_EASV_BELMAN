@@ -12,6 +12,7 @@ public class Photo {
     LocalDateTime uploadTime;
     String comment;
     String tag;
+    int verifyStatus;
 
     public Photo(){}
 
@@ -62,6 +63,16 @@ public class Photo {
     public String getTag() {return tag;}
 
     public void setTag(String tag) {this.tag = tag;}
+
+    public void setVerifyStatus(int status)
+    {
+        this.verifyStatus = status;
+    }
+
+    public int getVerifyStatus()
+    {
+        return verifyStatus;
+    }
 
     @Override
     public String toString()

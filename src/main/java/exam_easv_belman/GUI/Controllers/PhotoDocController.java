@@ -337,6 +337,7 @@ private void handleImageClick(Photo photo) {
                     Label tagLabel = new Label(tagOrder[tagIndex]);
                     tagLabel.getStylesheets().add("/css/photoDoc.css");
                     tagLabel.getStyleClass().add("photo-tag-label");
+                    tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
                     tagLabel.setAlignment(Pos.CENTER);
                     tagLabel.setMinWidth(100);
                     tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
@@ -467,6 +468,7 @@ private void handleImageClick(Photo photo) {
                 Label tagLabel = new Label("Additional");
                 tagLabel.getStylesheets().add("/css/photoDoc.css");
                 tagLabel.getStyleClass().add("photo-tag-label");
+                tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
                 tagLabel.setAlignment(Pos.CENTER);
                 tagLabel.setMinWidth(100);
                 tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
@@ -528,4 +530,19 @@ private void handleImageClick(Photo photo) {
             e.printStackTrace();
         }
     }
+
+    private String getTagStyleBasedOnVerification(Photo photo) {
+        int verifyState = photo.getVerifyStatus();
+        if (verifyState == 2) {
+            return "-fx-background-color: rgba(26,110,26,0.75)";
+        }
+
+        else if (verifyState == 3) {
+            return "-fx-background-color: rgba(159,5,5,0.75)";
+        }
+
+        return "-fx-background-color: rgba(0, 0, 0, 0.7);";
+    }
+
+
 }

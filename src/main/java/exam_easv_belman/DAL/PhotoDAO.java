@@ -168,7 +168,7 @@ public class PhotoDAO implements IPhotoDataAccess{
                                           Product product,
                                           String tag) throws SQLException {
 
-        String sql = "INSERT INTO Photos (product_id, file_path, uploaded_by, uploaded_at, tag) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Photos (product_id, file_path, uploaded_by, uploaded_at, tag, verify_state) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             for (Path path : filePaths) {
@@ -177,6 +177,7 @@ public class PhotoDAO implements IPhotoDataAccess{
                 statement.setInt(3, uploader.getId());
                 statement.setObject(4, LocalDateTime.now());
                 statement.setString(5, tag);
+                statement.setInt(6, 0);
                 statement.addBatch();
             }
             statement.executeBatch();
@@ -203,6 +204,7 @@ public class PhotoDAO implements IPhotoDataAccess{
                 tempImg.setUploadTime(rs.getObject("uploaded_at", LocalDateTime.class));
                 tempImg.setComment(rs.getString("comment"));
                 tempImg.setTag(rs.getString("tag"));
+                tempImg.setVerifyStatus(rs.getInt("verify_state"));
                 photos.add(tempImg);
             }
             System.out.println("length:" + photos.size());
@@ -230,6 +232,8 @@ public class PhotoDAO implements IPhotoDataAccess{
                 photo.setUploadedBy(rs.getInt("UploadedBy"));
                 photo.setUploadTime(rs.getTimestamp("UploadTime").toLocalDateTime());
                 photo.setComment(rs.getString("Comment"));
+                photo.setVerifyStatus(rs.getInt("verify_status"));
+                System.out.println();
 
                 photos.add(photo);
             }
@@ -279,6 +283,20 @@ public class PhotoDAO implements IPhotoDataAccess{
             ps.setInt(2, photo.getId());
             ps.executeUpdate();
             System.out.println("comment added to photo with id " + photo.getId());
+        }
+    }
+
+    @Override
+    public void changeVeirfyState(Photo photo, int approval) throws SQLException {
+        String sql = "UPDATE Photos SET verify_state = ? WHERE id = ?";
+        try(Connection conn = dbConnector.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setInt(1, approval);
+            ps.setInt(2, photo.getId());
+            ps.executeUpdate();
+            System.out.println("verify state changed to " + approval + " for photo with id " + photo.getId());
+        }
+        catch (SQLServerException e){
+            e.printStackTrace();
         }
     }
 

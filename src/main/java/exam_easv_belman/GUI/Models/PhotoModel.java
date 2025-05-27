@@ -43,6 +43,10 @@ public class PhotoModel {
         photoManager.addCommentToPhoto(comment, photo);
     }
 
+    public void changeVeirfyState(Photo photo, int approval) throws SQLException {
+        photoManager.changeVeirfyState(photo, approval);
+    }
+
 
 
 }

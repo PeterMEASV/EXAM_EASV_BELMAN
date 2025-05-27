@@ -30,4 +30,6 @@ public interface IPhotoDataAccess {
     Product getProductFromNumber(String photoNumber) throws SQLException;
 
     void addCommentToPhoto(String comment, Photo photo) throws SQLException;
+
+    void changeVeirfyState(Photo photo, int approval) throws SQLException;
 }
