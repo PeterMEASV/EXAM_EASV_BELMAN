@@ -1,4 +1,4 @@
-package exam_easv_belman.GUI;
+package exam_easv_belman.GUI.util;
 
 /**
  * Enumeration representing different views in the application.

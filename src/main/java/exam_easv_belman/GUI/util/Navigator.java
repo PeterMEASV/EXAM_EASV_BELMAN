@@ -1,7 +1,5 @@
-package exam_easv_belman.GUI;
+package exam_easv_belman.GUI.util;
 
-import exam_easv_belman.BE.Photo;
-import exam_easv_belman.GUI.Controllers.ImageController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

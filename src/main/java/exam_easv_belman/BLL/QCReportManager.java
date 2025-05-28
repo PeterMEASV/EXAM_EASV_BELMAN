@@ -1,21 +1,14 @@
 package exam_easv_belman.BLL;
 
-import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Product;
-import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.util.PdfGeneratorUtil;
 import exam_easv_belman.GUI.Models.ProductModel;
-import exam_easv_belman.GUI.SessionManager;
+import exam_easv_belman.BLL.util.SessionManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class QCReportManager {

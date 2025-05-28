@@ -1,4 +1,4 @@
-package exam_easv_belman.GUI;
+package exam_easv_belman.BLL.util;
 import exam_easv_belman.BE.User;
 
 //Thread-safe singleton user session manager class

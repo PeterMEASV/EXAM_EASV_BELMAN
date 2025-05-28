@@ -1,14 +1,12 @@
 package exam_easv_belman.GUI.Controllers;
 
-import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.OpenCVStrategy;
 import exam_easv_belman.BLL.PhotoStrategy;
-import exam_easv_belman.BLL.exceptions.CameraNotFoundException;
 import exam_easv_belman.GUI.Models.UserModel;
-import exam_easv_belman.GUI.Navigator;
-import exam_easv_belman.GUI.SessionManager;
-import exam_easv_belman.GUI.View;
+import exam_easv_belman.GUI.util.Navigator;
+import exam_easv_belman.BLL.util.SessionManager;
+import exam_easv_belman.GUI.util.View;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

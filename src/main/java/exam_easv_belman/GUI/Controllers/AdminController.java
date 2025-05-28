@@ -3,10 +3,9 @@ package exam_easv_belman.GUI.Controllers;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Models.UserModel;
-import exam_easv_belman.GUI.Navigator;
-import exam_easv_belman.GUI.SessionManager;
-import exam_easv_belman.GUI.View;
-import exam_easv_belman.GUI.util.AlertHelper;
+import exam_easv_belman.GUI.util.Navigator;
+import exam_easv_belman.BLL.util.SessionManager;
+import exam_easv_belman.GUI.util.View;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,7 +29,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 public class AdminController implements Initializable {
