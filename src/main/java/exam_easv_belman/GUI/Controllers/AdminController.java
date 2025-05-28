@@ -3,6 +3,7 @@ package exam_easv_belman.GUI.Controllers;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Models.UserModel;
+import exam_easv_belman.GUI.util.AlertHelper;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
 import exam_easv_belman.GUI.util.View;
@@ -120,7 +121,7 @@ public class AdminController implements Initializable {
                     lstUsers.getSelectionModel().select(user);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    //TODO alert
+                    AlertHelper.showAlert("Error", "An error occurred while attempting to create the user.", Alert.AlertType.ERROR);
                 }
             }
 
@@ -143,41 +144,26 @@ public class AdminController implements Initializable {
     public void handleDeleteUser(ActionEvent actionEvent) {
         User selectedUser = lstUsers.getSelectionModel().getSelectedItem();
         if (selectedUser == null) {
-            //TODO Brug AlertHelper
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("No User Selected");
-            alert.setHeaderText("Please select a user to delete.");
-            alert.setContentText("You must select a user from the list before deleting.");
-            alert.showAndWait();
+
+            AlertHelper.showAlert("No User Selected","You must select a user from the list before deleting.", Alert.AlertType.WARNING);
             return;
         }
 
         // Confirm deletion
-        //TODO Brug AlertHelper
-        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmationAlert.setTitle("Delete User");
-        confirmationAlert.setHeaderText("Are you sure you want to delete this user?");
-        confirmationAlert.setContentText("User: " + selectedUser.getUsername());
 
-        if (confirmationAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            try {
-                // Delete the user using the model
-                userModel.deleteUser(selectedUser);
+        AlertHelper.showConfirmationAlert("Delete User", "Are you sure you want to delete" + selectedUser.getUsername(), () ->{try {
+            // Delete the user using the model
+            userModel.deleteUser(selectedUser);
 
-                // Refresh the user list
-                populateUserList();
-            } catch (Exception e) {
-                e.printStackTrace();
+            // Refresh the user list
+            populateUserList();
+        } catch (Exception e) {
+            e.printStackTrace();
 
-                // Show an error alert
-                //TODO Brug AlertHelper
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setTitle("Error");
-                errorAlert.setHeaderText("Unable to Delete User");
-                errorAlert.setContentText("An error occurred while attempting to delete the user.");
-                errorAlert.showAndWait();
-            }
-        }
+            // Show an error alert
+            AlertHelper.showAlert("Error", "An error occurred while attempting to delete the user.", Alert.AlertType.ERROR);
+
+        }});
 
     }
 
@@ -188,7 +174,7 @@ public class AdminController implements Initializable {
             users = userModel.getAllUsers();
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO alert
+            AlertHelper.showAlert("Error","Unable to PopulateUserList.", Alert.AlertType.ERROR);
         }
 
         if (users == null) {
