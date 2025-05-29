@@ -208,6 +208,7 @@ public class AdminController implements Initializable {
                 } else {
                     roleLabel = new Label("null");
                 }
+                nameLabel.setStyle("-fx-font-weight: bold");
 
                 VBox vBox = new VBox(nameLabel, roleLabel);
                 setGraphic(vBox);

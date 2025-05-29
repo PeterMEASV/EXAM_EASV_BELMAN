@@ -3,7 +3,7 @@ package exam_easv_belman.GUI.Controllers;
 import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.GUI.Models.PhotoModel;
-import exam_easv_belman.GUI.SessionManager;
+import exam_easv_belman.BLL.util.SessionManager;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
