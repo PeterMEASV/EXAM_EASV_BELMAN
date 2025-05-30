@@ -36,17 +36,17 @@
                      <items>
                         <MenuItem mnemonicParsing="false">
                            <graphic>
+                              <Button fx:id="btnOperator" mnemonicParsing="false" onAction="#handleOperator" text="Operator" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
                               <Button fx:id="btnQC" mnemonicParsing="false" onAction="#handleQC" text="QC" />
                            </graphic>
                         </MenuItem>
                         <MenuItem mnemonicParsing="false">
                            <graphic>
-                              <Button fx:id="btnUser" mnemonicParsing="false" onAction="#handleUserManagement" text="User" />
-                           </graphic>
-                        </MenuItem>
-                        <MenuItem mnemonicParsing="false">
-                           <graphic>
-                              <Button fx:id="btnOrder1" mnemonicParsing="false" onAction="#handleOrder" text="ORDER" />
+                              <Button fx:id="btnOrder1" mnemonicParsing="false" onAction="#handleOrder" text="Order" />
                            </graphic>
                         </MenuItem>
                      </items>

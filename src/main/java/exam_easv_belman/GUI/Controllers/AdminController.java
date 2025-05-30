@@ -62,6 +62,11 @@ public class AdminController implements Initializable {
 
     boolean passwordChanged = false;
 
+    @FXML
+    private Button btnOperator;
+    @FXML
+    private Button btnQC;
+
 
     private UserModel userModel;
     private User selectedUser;
@@ -78,6 +83,11 @@ public class AdminController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        if(SessionManager.getInstance().getCurrentOrderNumber() == null)
+        {
+            btnOperator.setDisable(true);
+            btnQC.setDisable(true);
+        }
         populateUserList();
         //lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
         btnUpdateUser.setVisible(false);
@@ -345,22 +355,6 @@ public class AdminController implements Initializable {
         }
     }
 
-    public void handleQC(ActionEvent actionEvent) {
-        try {
-            Navigator.getInstance().goTo(View.QCView);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void handleUserManagement(ActionEvent actionEvent) {
-        try {
-            Navigator.getInstance().goTo(View.ADMIN);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void handleOrder(ActionEvent actionEvent) {
         try {
             Navigator.getInstance().goTo(View.ORDER);
@@ -388,6 +382,46 @@ public class AdminController implements Initializable {
             AlertHelper.showAlert("Error", "An error occurred while attempting to update the user.", Alert.AlertType.ERROR);
         }
         });
+    }
+
+    @FXML
+    private void handleOperator(ActionEvent actionEvent) {
+        try {
+                Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
+                    if (controller instanceof PhotoDocController) {
+                        try {
+                            ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+
+        }
+
+    }
+
+    @FXML
+    public void handleQC(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().setRoot(View.QCView, controller -> {
+                if (controller instanceof QCController) {
+                    try {
+                        ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+
+        }
+
     }
 }
 

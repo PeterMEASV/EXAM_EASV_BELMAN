@@ -8,6 +8,8 @@ import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
 import exam_easv_belman.GUI.util.View;
 import exam_easv_belman.GUI.util.AlertHelper;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,6 +28,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +48,8 @@ public class SendViewController implements Initializable {
     private Gmailer gMailer;
     @FXML
     private Button btnLog;
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public void setOrderNumber(String orderNumber) throws Exception {
         if (orderModel == null) {
@@ -102,18 +108,67 @@ public class SendViewController implements Initializable {
 
     }
 
-    public void handlePreview(ActionEvent actionEvent) throws Exception {
-        /*
-        File pdfFile = new File("src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf");
-        Stage stage = (Stage) txtOrderNumber.getScene().getWindow(); // Get current stage
-        PdfGeneratorUtil.generatePdf(pdfFile.getAbsolutePath(), txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), true, stage);
-         */
-        try {
-            // Define the file path for the PDF
-            String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + "_Preview.pdf";
-            File pdfFile = new File(filePath);
+    public void handlePreview(ActionEvent actionEvent) {
+    try {
+        // Define the file path for the PDF
+        String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + "_Preview.pdf";
+        File pdfFile = new File(filePath);
+        Stage currentStage = (Stage) txtOrderNumber.getScene().getWindow();
 
-            // Generate the PDF using QCReportManager
+        Task<Void> previewTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                // Generate the PDF using QCReportManager
+                QCReportManager qcReportManager = new QCReportManager();
+                qcReportManager.generateQCReportPDF(filePath, txtEmail.getText(), txtComment.getText(), currentStage);
+                return null;
+            }
+        };
+
+        previewTask.setOnSucceeded(event -> {
+            try {
+                PdfPreviewUtil.showPdfPreview(pdfFile, currentStage);
+            } catch (Exception e) {
+                Platform.runLater(() -> 
+                    AlertHelper.showAlert("Error", "Failed to preview the PDF", Alert.AlertType.ERROR)
+                );
+                e.printStackTrace();
+            }
+        });
+
+        previewTask.setOnFailed(event -> {
+            Platform.runLater(() -> {
+                AlertHelper.showAlert("Error", "Failed to preview the PDF", Alert.AlertType.ERROR);
+                pdfFile.delete();
+            });
+        });
+
+        executor.execute(previewTask);
+    } catch (Exception e) {
+        e.printStackTrace();
+        AlertHelper.showAlert("Error", "Failed generating the PDF. ERROR SVC134", Alert.AlertType.ERROR);
+    }
+}
+
+public void handleSend(ActionEvent actionEvent) {
+    // Check if the email is valid before sending
+    if (!isValidEmail(txtEmail.getText())) {
+        AlertHelper.showAlert(
+                "Error",
+                "Please input a valid email address.",
+                Alert.AlertType.ERROR
+        );
+        return;
+    }
+
+    // File path for the PDF to be generated
+    String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
+    File generatedPDF = new File(filePath);
+
+    Task<Void> sendTask = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+            // Generate the QC Report as a PDF
             QCReportManager qcReportManager = new QCReportManager();
             qcReportManager.generateQCReportPDF(
                     filePath,
@@ -122,59 +177,35 @@ public class SendViewController implements Initializable {
                     (Stage) txtOrderNumber.getScene().getWindow()
             );
 
-            // Open the preview using PdfPreviewUtil
-            PdfPreviewUtil.showPdfPreview(pdfFile, (Stage) txtOrderNumber.getScene().getWindow());
-
-        } catch (Exception e) {
-            AlertHelper.showAlert("Error", "Failed to preview the PDF: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
-        }
-
-    }
-
-
-    public void handleSend(ActionEvent actionEvent) throws Exception {
-        // Check if the email is valid before sending
-        if (!isValidEmail(txtEmail.getText())) {
-            AlertHelper.showAlert(
-                    "Error",
-                    "Please input a valid email address.",
-                    Alert.AlertType.ERROR
+            orderModel.addCommentToOrder(txtComment.getText(), txtOrderNumber.getText());
+            gMailer.sendMail(
+                    txtOrderNumber.getText(),
+                    "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: "
+                            + txtOrderNumber.getText(),
+                    txtEmail.getText(),
+                    generatedPDF
             );
-            return;
+            return null;
         }
+    };
 
-
-        // File path for the PDF to be generated
-        String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
-        File generatedPDF = new File(filePath);
-
-        // Generate the QC Report as a PDF
-        QCReportManager qcReportManager = new QCReportManager();
-        qcReportManager.generateQCReportPDF(
-                filePath,
-                txtEmail.getText(),
-                txtComment.getText(),
-                (Stage) txtOrderNumber.getScene().getWindow()
+    sendTask.setOnSucceeded(event -> {
+        Platform.runLater(() -> 
+            AlertHelper.showAlert("Email sent", "Email sent successfully!", Alert.AlertType.INFORMATION)
         );
-
-
-        orderModel.addCommentToOrder(txtComment.getText(), txtOrderNumber.getText());
-        gMailer.sendMail(
-                txtOrderNumber.getText(),
-                "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: "
-                        + txtOrderNumber.getText(),
-                txtEmail.getText(),
-                generatedPDF
-        );
-        AlertHelper.showAlert("Email sent", "Email sent successfully!", Alert.AlertType.INFORMATION);
-
-
-
         // Delete the PDF after sending the email
         boolean deleted = generatedPDF.delete();
         System.out.println("File deleted: " + deleted);
-    }
+    });
+
+    sendTask.setOnFailed(event -> {
+        Platform.runLater(() -> 
+            AlertHelper.showAlert("Error", "Failed to send the email. ERROR SVC203", Alert.AlertType.ERROR)
+        );
+    });
+
+    executor.execute(sendTask);
+}
 
     private boolean isValidEmail(String email) {
         // Regex for validating the email address structure
