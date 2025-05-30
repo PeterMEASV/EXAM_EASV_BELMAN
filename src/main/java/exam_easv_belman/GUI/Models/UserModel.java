@@ -36,6 +36,10 @@ public class UserModel {
         userManager.attachSignature(user);
 
     }
+
+    public void updateUser(User selectedUser, boolean passwordChanged) throws Exception {
+        userManager.updateUser(selectedUser, passwordChanged);
+    }
 }
 
 

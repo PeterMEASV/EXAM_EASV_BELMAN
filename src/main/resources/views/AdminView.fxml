@@ -146,32 +146,32 @@
                            <padding>
                               <Insets bottom="-5.0" top="5.0" />
                            </padding></Label>
-                        <TextField fx:id="txtUsername" editable="false" prefHeight="26.0" prefWidth="286.0" promptText="username" />
+                        <TextField fx:id="txtUsername" prefHeight="26.0" prefWidth="286.0" promptText="username" />
                         <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Password">
                            <padding>
                               <Insets bottom="-5.0" top="5.0" />
                            </padding></Label>
-                        <TextField fx:id="txtPassword" editable="false" promptText="password" />
+                        <TextField fx:id="txtPassword" promptText="password" />
                         <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="First Name">
                            <padding>
                               <Insets bottom="-5.0" top="5.0" />
                            </padding></Label>
-                        <TextField fx:id="txtFirstName" editable="false" promptText="first name" />
+                        <TextField fx:id="txtFirstName" promptText="first name" />
                         <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Last Name">
                            <padding>
                               <Insets bottom="-5.0" top="5.0" />
                            </padding></Label>
-                        <TextField fx:id="txtLastName" editable="false" promptText="last name" />
+                        <TextField fx:id="txtLastName" promptText="last name" />
                         <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Email Address">
                            <padding>
                               <Insets bottom="-5.0" top="5.0" />
                            </padding></Label>
-                        <TextField fx:id="txtEmail" editable="false" promptText="email" />
+                        <TextField fx:id="txtEmail" promptText="email" />
                         <Label styleClass="txtInformation" stylesheets="@../css/admin.css" text="Phone Number">
                            <padding>
                               <Insets bottom="-5.0" top="5.0" />
                            </padding></Label>
-                        <TextField fx:id="txtPhone" editable="false" promptText="phone" />
+                        <TextField fx:id="txtPhone" promptText="phone" />
                         <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="438.0">
                            <children>
                               <Button fx:id="btnSignatur" mnemonicParsing="false" onAction="#handleSetSignatur" style="-fx-font-size: 14;" stylesheets="@../css/general.css" text="Assign Signatur" visible="false">
@@ -179,7 +179,11 @@
                                     <Insets right="20.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" style="-fx-font-size: 14px;" stylesheets="@../css/general.css" text="delete user" />
+                              <Button fx:id="btnUpdateUser" mnemonicParsing="false" onAction="#handleUpdateUser" style="-fx-font-size: 14px;" stylesheets="@../css/general.css" text="update user">
+                                 <HBox.margin>
+                                    <Insets right="50.0" />
+                                 </HBox.margin></Button>
+                              <Button fx:id="btnDeleteUser1" layoutX="355.0" layoutY="16.0" mnemonicParsing="false" onAction="#handleDeleteUser" style="-fx-font-size: 14px;" stylesheets="@../css/general.css" text="delete user" />
                            </children>
                            <VBox.margin>
                               <Insets />

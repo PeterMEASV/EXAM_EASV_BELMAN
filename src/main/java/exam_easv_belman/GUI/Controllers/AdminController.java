@@ -57,6 +57,11 @@ public class AdminController implements Initializable {
     public Label lblCurrentUser;
     @FXML
     private Button btnSignatur;
+    @FXML
+    private Button btnUpdateUser;
+
+    boolean passwordChanged = false;
+
 
     private UserModel userModel;
     private User selectedUser;
@@ -75,7 +80,7 @@ public class AdminController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         populateUserList();
         //lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
-
+        btnUpdateUser.setVisible(false);
         if (lstUsers.getItems() != null) {
             lstUsers.getSelectionModel().select(0);
             User user = lstUsers.getSelectionModel().getSelectedItem();
@@ -96,6 +101,33 @@ public class AdminController implements Initializable {
         });
 
         btnSignatur.setVisible(false);
+
+        txtUsername.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
+        txtPassword.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+            passwordChanged = true;
+
+        });
+
+        txtFirstName.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
+        txtLastName.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
+        txtEmail.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
+        txtPhone.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
 
     }
 
@@ -335,6 +367,27 @@ public class AdminController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleUpdateUser(ActionEvent actionEvent) {
+        AlertHelper.showConfirmationAlert("Update User", "Are you sure you want to update" + selectedUser.getUsername(), () ->{
+            try {
+            selectedUser.setUsername(txtUsername.getText());
+            if(passwordChanged) {
+                selectedUser.setPassword(txtPassword.getText());
+            }
+            selectedUser.setFirstName(txtFirstName.getText());
+            selectedUser.setLastName(txtLastName.getText());
+            selectedUser.setEmail(txtEmail.getText());
+            selectedUser.setPhoneNumber(txtPhone.getText());
+
+            userModel.updateUser(selectedUser, passwordChanged);
+        } catch(Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "An error occurred while attempting to update the user.", Alert.AlertType.ERROR);
+        }
+        });
     }
 }
 
