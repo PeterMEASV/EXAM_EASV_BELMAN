@@ -1,9 +1,7 @@
 package exam_easv_belman.BLL;
 
-import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.util.PBKDF2PasswordUtil;
-import exam_easv_belman.DAL.UserDAO;
 import exam_easv_belman.DAL.UserRepositoryImpl;
 import exam_easv_belman.GUI.util.AlertHelper;
 import exam_easv_belman.Repository.IUserRepository;
