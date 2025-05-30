@@ -148,4 +148,25 @@ public class UserDAO implements IUserDataAccess {
             throw new Exception(e);
         }
     }
+
+    @Override
+    public void updateUser(User user) {
+
+    }
+
+    public void attachSignature(User user) throws Exception {
+        String sql = "UPDATE Users SET signature_path = ? WHERE id = ?";
+
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1,user.getSignaturePath());
+            statement.setInt(2, user.getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Error attaching signature", Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+
+    }
 }
