@@ -4,37 +4,34 @@ import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.util.PBKDF2PasswordUtil;
 import exam_easv_belman.DAL.UserDAO;
+import exam_easv_belman.DAL.UserRepositoryImpl;
 import exam_easv_belman.GUI.util.AlertHelper;
+import exam_easv_belman.Repository.IUserRepository;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
+import org.apache.http.auth.InvalidCredentialsException;
 
 import java.util.List;
 
 public class UserManager {
 
-    private UserDAO userDAO;
+    private IUserRepository userRepo;
 
     public UserManager() throws Exception {
-        userDAO = new UserDAO();
+        userRepo = new UserRepositoryImpl();
     }
 
     public User authenticateUser(String username, String rawPassword) throws Exception {
-
-        //1. get the user from DAO, throw an exception if user doesnt exist
-        //TODO implement the called method
-        User user = userDAO.findByUsername(username);
+        User user = userRepo.findByUsername(username);
         if (user == null || !PBKDF2PasswordUtil.verifyPassword(rawPassword, user.getPassword())) {
-            //TODO make a custom InvalidCredentialException, that ideally comes with a default message,
-            // so i dont have to write a message everytime its used(which is exactly once....)
-            // then pass that exception up the stack. to alert the user.
-            throw new Exception();
+            throw new InvalidCredentialsException("Invalid credentials");
         }
 
         return user;
     }
 
     public User authenticateUser(String QRKey) throws Exception {
-        List<User> allUsers = userDAO.getAllUsers();
+        List<User> allUsers = userRepo.findAll();
         for(User user : allUsers) {
             if(user.getQrKey() != null) {
                 if (PBKDF2PasswordUtil.verifyPassword(QRKey, user.getQrKey())) {
@@ -54,18 +51,18 @@ public class UserManager {
         String rawKey = user.getQrKey();
         String hashedKey = PBKDF2PasswordUtil.hashPassword(rawKey);
         user.setQrKey(hashedKey);
-        return userDAO.createUser(user);
+        return userRepo.save(user);
     }
 
     public ObservableList<User> getAllUsers() throws Exception {
-         return userDAO.getAllUsers();
+         return userRepo.findAll();
     }
 
-    public void deleteUser(User user) {
-        userDAO.deleteUser(user);
+    public void deleteUser(User user) throws Exception {
+        userRepo.delete(user);
     }
 
-    public void attachSignatur(User user) throws Exception {
-        userDAO.attachSignatur(user);
+    public void attachSignature(User user) throws Exception {
+        userRepo.attachSignature(user);
     }
 }

@@ -1,6 +1,8 @@
 package exam_easv_belman.BLL;
 
 import exam_easv_belman.BLL.exceptions.CameraNotFoundException;
+import exam_easv_belman.GUI.util.AlertHelper;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import nu.pattern.OpenCV;
 import org.opencv.core.Mat;
@@ -43,8 +45,8 @@ public class OpenCVStrategy implements PhotoStrategy {
         Mat frame = new Mat();
         camera.read(frame);
         if (frame.empty()) {
+            AlertHelper.showAlert("Camera error", "Error getting frames. (ERROR OCS48)", Alert.AlertType.ERROR);
             throw new Exception("Frame empty");
-            //TODO custom exception and alert the user in the gui layer, say BLANK FRAME or smth
         }
 
         MatOfByte buffer = new MatOfByte();

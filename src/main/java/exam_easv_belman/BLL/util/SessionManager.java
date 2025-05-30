@@ -12,7 +12,7 @@ public class SessionManager {
 
     private SessionManager() {}
 
-    //Double-checked locking to ensure thread safety.
+
     public static SessionManager getInstance() {
         //if the instance is null at the time of accessing enter if statement
         if (instance == null) {

@@ -1,9 +1,9 @@
 package exam_easv_belman.DAL;
 
-import com.microsoft.sqlserver.jdbc.SQLServerException;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.util.AlertHelper;
+import exam_easv_belman.Repository.IUserRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -12,14 +12,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class UserDAO implements IUserDataAccess {
+public class UserRepositoryImpl implements IUserRepository {
 
     private DBConnector dbConnector;
 
-    public UserDAO() throws Exception {
+    public UserRepositoryImpl() throws Exception {
         dbConnector = new DBConnector();
     }
 
@@ -57,7 +55,19 @@ public class UserDAO implements IUserDataAccess {
     }
 
     @Override
-    public User createUser(User user) throws Exception {
+    public User save(User user) throws Exception {
+        if(user.getId() == 0)
+        {
+            return createUser(user);
+        }
+        else
+        {
+            updateUser(user);
+            return user;
+        }
+    }
+
+    private User createUser(User user) throws Exception {
 
         String sql = "INSERT INTO Users (username, password_hash, role_id, first_Name, last_Name," +
                 "email, phone, qr_key, signature_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -96,8 +106,12 @@ public class UserDAO implements IUserDataAccess {
         }
     }
 
+    private void updateUser(User user) {
+        //Todo write the logic lmao
+    }
+
     @Override
-    public void deleteUser(User user) {
+    public void delete(User user) throws Exception {
         String sql = "DELETE FROM Users WHERE id = ?";
 
         try (Connection connection = dbConnector.getConnection();
@@ -110,11 +124,10 @@ public class UserDAO implements IUserDataAccess {
             AlertHelper.showAlert("Error", "Error Deleting User", Alert.AlertType.ERROR);
             e.printStackTrace();
         }
-
     }
 
     @Override
-    public ObservableList<User> getAllUsers() throws Exception {
+    public ObservableList<User> findAll() throws Exception {
 
         String sql = "SELECT * FROM dbo.Users";
 
@@ -147,5 +160,22 @@ public class UserDAO implements IUserDataAccess {
         } catch (SQLException e) {
             throw new Exception(e);
         }
+    }
+
+    @Override
+    public void attachSignature(User user) throws Exception {
+        String sql = "UPDATE Users SET signature_path = ? WHERE id = ?";
+
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1,user.getSignaturePath());
+            statement.setInt(2, user.getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Error attaching signature", Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+
     }
 }

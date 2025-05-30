@@ -294,7 +294,7 @@ public class AdminController implements Initializable {
 
                 try {
                     UserModel userModel = new UserModel();
-                    userModel.attachSignatur(selectedUser);
+                    userModel.attachSignature(selectedUser);
 
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Success");

@@ -32,8 +32,8 @@ public class UserModel {
         return userManager.authenticateUser(qrKey);
     }
 
-    public void attachSignatur(User user) throws Exception {
-        userManager.attachSignatur(user);
+    public void attachSignature(User user) throws Exception {
+        userManager.attachSignature(user);
 
     }
 }

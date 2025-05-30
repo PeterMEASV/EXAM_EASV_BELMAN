@@ -5,6 +5,7 @@ import exam_easv_belman.BLL.OpenCVStrategy;
 import exam_easv_belman.BLL.PhotoStrategy;
 import exam_easv_belman.BLL.exceptions.CameraNotFoundException;
 import exam_easv_belman.GUI.Models.PhotoModel;
+import exam_easv_belman.GUI.util.AlertHelper;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
 import exam_easv_belman.GUI.util.View;
@@ -13,6 +14,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -100,12 +102,11 @@ public class CameraController implements Initializable {
         try {
             strategy.start();
         } catch (CameraNotFoundException e) {
+            AlertHelper.showAlert("Camera error", "Error opening the camera. ERROR(CC106)", Alert.AlertType.ERROR);
             e.printStackTrace();
-            //TODO alert
         } catch (Exception e) {
+            AlertHelper.showAlert("Camera not found", "The camera was not found. ERROR(CC107)", Alert.AlertType.ERROR);
             e.printStackTrace();
-            //TODO alert blank frames VISUALLY INFORM THE USER THAT NO CAMERA WAS FOUND USING AN IMAGE ON THE IMAGEVIEW
-            // SAYING - NO CAMERA FOUND
         }
         mainPreviewExecutor = Executors.newSingleThreadScheduledExecutor();
         mainPreviewExecutor.scheduleAtFixedRate(() -> {
