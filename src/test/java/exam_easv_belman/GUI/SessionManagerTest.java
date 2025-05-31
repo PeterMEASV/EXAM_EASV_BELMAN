@@ -194,29 +194,28 @@ public class SessionManagerTest {
          */
     @Test
     void testCompleteSessionLifecycle() {
-        SessionManager manager = SessionManager.getInstance();
         
         // Test complete lifecycle of a session
         User testUser = new User();
         testUser.setUsername("testUser");
         
         // Setup session
-        manager.setCurrentUser(testUser);
-        manager.setCurrentOrderNumber("ORDER-789");
-        manager.setIsProduct(true);
-        manager.setCurrentProductNumber("PROD-123");
+        SessionManager.getInstance().setCurrentUser(testUser);
+        SessionManager.getInstance().setCurrentOrderNumber("ORDER-789");
+        SessionManager.getInstance().setIsProduct(true);
+        SessionManager.getInstance().setCurrentProductNumber("PROD-123");
         
         // Verify session state
-        assertEquals(testUser, manager.getCurrentUser());
-        assertEquals("ORDER-789", manager.getCurrentOrderNumber());
-        assertTrue(manager.getIsProduct());
-        assertEquals("PROD-123", manager.getCurrentProductNumber());
+        assertEquals(testUser, SessionManager.getInstance().getCurrentUser());
+        assertEquals("ORDER-789", SessionManager.getInstance().getCurrentOrderNumber());
+        assertTrue(SessionManager.getInstance().getIsProduct());
+        assertEquals("PROD-123", SessionManager.getInstance().getCurrentProductNumber());
         
         // Test logout
-        manager.logout();
+        SessionManager.getInstance().logout();
         
         // Verify clean session state
-        assertNull(manager.getCurrentUser());
-        assertNull(manager.getCurrentOrderNumber());
+        assertNull(SessionManager.getInstance().getCurrentUser());
+        assertNull(SessionManager.getInstance().getCurrentOrderNumber());
     }
 }
