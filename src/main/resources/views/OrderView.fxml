@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.OrderController">
+<VBox stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.OrderController">
    <children>
       <HBox prefHeight="53.0" prefWidth="600.0">
          <children>
@@ -36,11 +36,6 @@
                   </Text>
                   <MenuButton fx:id="DRPDown" mnemonicParsing="false" text="Select Workspace">
                     <items>
-                        <MenuItem mnemonicParsing="false">
-                           <graphic>
-                              <Button fx:id="btnQC" mnemonicParsing="false" onAction="#handleQC" text="QC" />
-                           </graphic>
-                        </MenuItem>
                       <MenuItem mnemonicParsing="false">
                            <graphic>
                               <Button fx:id="btnUser" mnemonicParsing="false" onAction="#handleUserManagement" text="User" />
@@ -48,7 +43,7 @@
                         </MenuItem>
                       <MenuItem mnemonicParsing="false">
                            <graphic>
-                              <Button fx:id="btnOrder" mnemonicParsing="false" onAction="#handleOrder" text="ORDER" />
+                              <Button fx:id="btnOrder" mnemonicParsing="false" onAction="#handleOrder" text="Order" />
                            </graphic></MenuItem>
                     </items>
                      <StackPane.margin>

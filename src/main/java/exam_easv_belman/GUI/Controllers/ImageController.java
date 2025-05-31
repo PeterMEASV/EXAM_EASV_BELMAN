@@ -162,9 +162,13 @@ public class ImageController implements Initializable {
         {
             path = View.QCView;
         }
-        else
+        else if(SessionManager.getInstance().getCurrentUser().getRole() == Role.OPERATOR)
         {
             path = View.PHOTO_DOC;
+        }
+        else
+        {
+            path = View.ADMIN;
         }
             try {
                 Navigator.getInstance().setRoot(path, controller -> {

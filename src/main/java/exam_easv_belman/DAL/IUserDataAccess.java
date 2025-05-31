@@ -1,5 +1,6 @@
 package exam_easv_belman.DAL;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import exam_easv_belman.BE.User;
 import javafx.collections.ObservableList;
 
@@ -15,7 +16,7 @@ public interface IUserDataAccess {
 
     ObservableList<User> getAllUsers() throws Exception;
 
-    void updateUser(User user);
+    void updateUser(User user) throws SQLServerException;
 
     void attachSignature(User user) throws Exception;
 }

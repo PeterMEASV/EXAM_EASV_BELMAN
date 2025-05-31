@@ -150,8 +150,28 @@ public class UserDAO implements IUserDataAccess {
     }
 
     @Override
-    public void updateUser(User user) {
+    public void updateUser(User user) throws SQLServerException {
 
+        String sql = "UPDATE Users SET username = ?, password_hash = ?, role_id = ?, first_Name = ?, last_Name = ?, email = ?, phone = ? WHERE id = ?";
+
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPassword());
+            statement.setInt(3, user.getRole() == Role.ADMIN ? 1 : user.getRole() == Role.OPERATOR ? 2 : 3);
+            statement.setString(4, user.getFirstName());
+            statement.setString(5, user.getLastName());
+            statement.setString(6, user.getEmail());
+            statement.setString(7, user.getPhoneNumber());
+            statement.setInt(8, user.getId());
+
+            statement.executeUpdate();
+            System.out.println("user updated");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void attachSignature(User user) throws Exception {

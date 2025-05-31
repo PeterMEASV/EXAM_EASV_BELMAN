@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="625.0" prefWidth="918.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.PhotoDocController">
+<VBox prefHeight="625.0" prefWidth="918.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.PhotoDocController">
    <children>
       <HBox>
          <children>
@@ -63,7 +63,7 @@
                         </MenuItem>
                         <MenuItem mnemonicParsing="false">
                            <graphic>
-                              <Button fx:id="btnOrder" mnemonicParsing="false" onAction="#handleOrder" text="ORDER" />
+                              <Button fx:id="btnOrder" mnemonicParsing="false" onAction="#handleOrder" text="Order" />
                            </graphic>
                         </MenuItem>
                      </items>

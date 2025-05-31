@@ -57,6 +57,16 @@ public class AdminController implements Initializable {
     public Label lblCurrentUser;
     @FXML
     private Button btnSignatur;
+    @FXML
+    private Button btnUpdateUser;
+
+    boolean passwordChanged = false;
+
+    @FXML
+    private Button btnOperator;
+    @FXML
+    private Button btnQC;
+
 
     private UserModel userModel;
     private User selectedUser;
@@ -73,9 +83,14 @@ public class AdminController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        if(SessionManager.getInstance().getCurrentOrderNumber() == null)
+        {
+            btnOperator.setDisable(true);
+            btnQC.setDisable(true);
+        }
         populateUserList();
         //lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
-
+        btnUpdateUser.setVisible(false);
         if (lstUsers.getItems() != null) {
             lstUsers.getSelectionModel().select(0);
             User user = lstUsers.getSelectionModel().getSelectedItem();
@@ -96,6 +111,33 @@ public class AdminController implements Initializable {
         });
 
         btnSignatur.setVisible(false);
+
+        txtUsername.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
+        txtPassword.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+            passwordChanged = true;
+
+        });
+
+        txtFirstName.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
+        txtLastName.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
+        txtEmail.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
+        txtPhone.textProperty().addListener((observable, oldValue, newValue) -> {
+            btnUpdateUser.setVisible(true);
+        });
+
 
     }
 
@@ -313,28 +355,73 @@ public class AdminController implements Initializable {
         }
     }
 
-    public void handleQC(ActionEvent actionEvent) {
-        try {
-            Navigator.getInstance().goTo(View.QCView);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void handleUserManagement(ActionEvent actionEvent) {
-        try {
-            Navigator.getInstance().goTo(View.ADMIN);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void handleOrder(ActionEvent actionEvent) {
         try {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleUpdateUser(ActionEvent actionEvent) {
+        AlertHelper.showConfirmationAlert("Update User", "Are you sure you want to update" + selectedUser.getUsername(), () ->{
+            try {
+            selectedUser.setUsername(txtUsername.getText());
+            if(passwordChanged) {
+                selectedUser.setPassword(txtPassword.getText());
+            }
+            selectedUser.setFirstName(txtFirstName.getText());
+            selectedUser.setLastName(txtLastName.getText());
+            selectedUser.setEmail(txtEmail.getText());
+            selectedUser.setPhoneNumber(txtPhone.getText());
+
+            userModel.updateUser(selectedUser, passwordChanged);
+        } catch(Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "An error occurred while attempting to update the user.", Alert.AlertType.ERROR);
+        }
+        });
+    }
+
+    @FXML
+    private void handleOperator(ActionEvent actionEvent) {
+        try {
+                Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
+                    if (controller instanceof PhotoDocController) {
+                        try {
+                            ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+
+        }
+
+    }
+
+    @FXML
+    public void handleQC(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().setRoot(View.QCView, controller -> {
+                if (controller instanceof QCController) {
+                    try {
+                        ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+
+        }
+
     }
 }
 

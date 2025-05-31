@@ -42,13 +42,7 @@ public class UserManager {
     }
 
     public User createUser(User user) throws Exception {
-        String rawPwd = user.getPassword();
-        String hashedPwd = PBKDF2PasswordUtil.hashPassword(rawPwd);
-        user.setPassword(hashedPwd);
-
-        String rawKey = user.getQrKey();
-        String hashedKey = PBKDF2PasswordUtil.hashPassword(rawKey);
-        user.setQrKey(hashedKey);
+        hashPassword(user);
         return userRepo.save(user);
     }
 
@@ -62,5 +56,22 @@ public class UserManager {
 
     public void attachSignature(User user) throws Exception {
         userRepo.attachSignature(user);
+    }
+
+    public void updateUser(User selectedUser, boolean passwordChanged) throws Exception {
+        if(passwordChanged){
+            hashPassword(selectedUser);
+        }
+        userRepo.save(selectedUser);
+    }
+
+    private void hashPassword(User user) throws Exception {
+        String rawPwd = user.getPassword();
+        String hashedPwd = PBKDF2PasswordUtil.hashPassword(rawPwd);
+        user.setPassword(hashedPwd);
+
+        String rawKey = user.getQrKey();
+        String hashedKey = PBKDF2PasswordUtil.hashPassword(rawKey);
+        user.setQrKey(hashedKey);
     }
 }

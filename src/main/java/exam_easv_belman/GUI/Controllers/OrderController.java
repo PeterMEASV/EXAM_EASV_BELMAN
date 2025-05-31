@@ -208,13 +208,5 @@ public class OrderController {
             e.printStackTrace();
         }
     }
-
-    public void handleQC(ActionEvent actionEvent) {
-        try {
-            Navigator.getInstance().goTo(View.QCView);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
 

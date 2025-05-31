@@ -525,10 +525,21 @@ private void handleImageClick(Photo photo) {
 
     public void handleQC(ActionEvent actionEvent) {
         try {
-            Navigator.getInstance().goTo(View.QCView);
+            Navigator.getInstance().setRoot(View.QCView, controller -> {
+                if (controller instanceof QCController) {
+                    try {
+                        ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+
         }
+
     }
 
     private String getTagStyleBasedOnVerification(Photo photo) {

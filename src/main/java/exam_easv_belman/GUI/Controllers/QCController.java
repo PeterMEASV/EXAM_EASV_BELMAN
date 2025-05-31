@@ -523,11 +523,21 @@ public class QCController implements Initializable {
         }
     }
 
-    public void handleQC(ActionEvent actionEvent) {
+    public void handleOperator(ActionEvent actionEvent) {
         try {
-            Navigator.getInstance().goTo(View.QCView);
+            Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
+                if (controller instanceof PhotoDocController) {
+                    try {
+                        ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+
         }
     }
 
