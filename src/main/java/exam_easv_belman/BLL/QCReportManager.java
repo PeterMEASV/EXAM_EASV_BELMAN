@@ -70,16 +70,16 @@ public class QCReportManager {
                 email,
                 comment,
                 orderNumber,
-                true, // Option to delete files/resources if necessary
+                true,
                 mainStage,
-                null, // Headers - unused in this flow
-                null, // Photo paths - handled internally in PdfGeneratorUtil
-                null, // Image comments - handled internally in PdfGeneratorUtil
+                null,
+                null,
+                null,
                 productModel,
                 photoManager,
                 qcName,
                 qcSignaturePath,
-                formattedUniqueOperators // Unique operator list
+                formattedUniqueOperators
         );
     }
 

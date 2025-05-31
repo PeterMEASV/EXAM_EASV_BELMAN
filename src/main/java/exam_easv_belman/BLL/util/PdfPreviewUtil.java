@@ -49,7 +49,7 @@ public class PdfPreviewUtil {
 
         previewStage.setScene(new Scene(scrollPane, 615, 800));
         previewStage.setTitle("PDF Preview");
-        Image icon = new Image(Objects.requireNonNull(PdfPreviewUtil.class.getResourceAsStream("/Images/BELMAN_Logo_264pxl.png"))); // get a better picture
+        Image icon = new Image(Objects.requireNonNull(PdfPreviewUtil.class.getResourceAsStream("/Images/BELMAN_Logo_264pxl.png")));
         previewStage.getIcons().add(icon);
 
         previewStage.show();
