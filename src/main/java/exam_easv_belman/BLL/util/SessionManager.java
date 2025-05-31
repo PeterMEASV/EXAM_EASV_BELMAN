@@ -1,12 +1,14 @@
 package exam_easv_belman.BLL.util;
 import exam_easv_belman.BE.User;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 //Thread-safe singleton user session manager class
 public class SessionManager {
     //volatile to stop partially created objects from being used.
     private static volatile SessionManager instance;
     private User currentUser;
-    private String currentOrderNumber;
+    private AtomicReference<String> currentOrderNumber = new AtomicReference<>();
     private boolean isProduct;
     private String currentProductNumber;
 
@@ -36,12 +38,8 @@ public class SessionManager {
         return currentUser;
     }
 
-    public void setCurrentOrderNumber(String orderNumber) {
-        this.currentOrderNumber = orderNumber;
-    }
-    public String getCurrentOrderNumber() {
-        return currentOrderNumber;
-    }
+    public void setCurrentOrderNumber(String orderNumber) {currentOrderNumber.set(orderNumber);}
+    public String getCurrentOrderNumber() {return currentOrderNumber.get();}
     public void setIsProduct(boolean isProduct) {
         this.isProduct = isProduct;
     }
@@ -61,7 +59,7 @@ public class SessionManager {
         System.out.println(currentUser + " logged out");
         currentUser = null;
         System.out.println("Logged out successfully");
-        currentOrderNumber = null;
+        currentOrderNumber.set(null);
 
     }
 }
