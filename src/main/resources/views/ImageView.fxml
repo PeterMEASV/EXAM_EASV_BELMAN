@@ -45,7 +45,7 @@
       </HBox>
       <HBox fx:id="rootHBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="329.0" minWidth="578.0" prefHeight="329.0" prefWidth="754.0" style="-fx-background-color: #e3e3e3;" VBox.vgrow="ALWAYS">
          <children>
-            <ImageView fx:id="imageView" fitHeight="374.0" fitWidth="577.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+            <ImageView fx:id="imageView" fitHeight="374.0" fitWidth="709.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
             <VBox fx:id="sidebarVbox" alignment="CENTER" prefHeight="357.0" prefWidth="177.0" style="-fx-background-color: #004b88;" HBox.hgrow="ALWAYS">
                <children>
                   <Region layoutX="10.0" layoutY="178.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
