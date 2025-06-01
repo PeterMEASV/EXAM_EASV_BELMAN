@@ -8,6 +8,7 @@ import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
+import exam_easv_belman.GUI.util.TimerManager;
 import exam_easv_belman.GUI.util.View;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
@@ -30,6 +31,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -71,6 +73,11 @@ public class QCController implements Initializable {
     private MenuButton btnProduct;
     private ProductModel productModel;
     private ObservableList<Photo> additionalImagesFromDatabase;
+    @FXML
+    private Circle objStatus;
+    @FXML
+    private Label lblUser;
+    private TimerManager timerManager;
 
 
     public void setOrderNumber(String orderNumber) throws Exception {
@@ -128,6 +135,10 @@ public class QCController implements Initializable {
         } else {
             DRPDown.setVisible(false);
         }
+
+        lblUser.setText(currentUser.getFirstName() + " " + currentUser.getLastName());
+        timerManager = new TimerManager(objStatus);
+        timerManager.initialize();
     }
 
 
@@ -137,6 +148,7 @@ public class QCController implements Initializable {
             AlertHelper.showAlert("Error", "No order number available", Alert.AlertType.ERROR);
             return;
         }
+        timerManager.cleanup();
 
         try {
             Navigator.getInstance().goTo(View.ORDER);
@@ -451,6 +463,7 @@ public class QCController implements Initializable {
     }
 
     private void handleImageClick(Photo photo) {
+        timerManager.cleanup();
         try {
             Navigator.getInstance().setRoot(View.IMG_VIEW, controller -> {
                 System.out.println(controller);
@@ -494,6 +507,7 @@ public class QCController implements Initializable {
     }
 
     public void handleOrder(ActionEvent actionEvent) {
+        timerManager.cleanup();
         try {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
@@ -524,6 +538,7 @@ public class QCController implements Initializable {
     }
 
     public void handleOperator(ActionEvent actionEvent) {
+        timerManager.cleanup();
         try {
             Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
                 if (controller instanceof PhotoDocController) {
@@ -542,6 +557,7 @@ public class QCController implements Initializable {
     }
 
     public void handleUserManagement(ActionEvent actionEvent) {
+        timerManager.cleanup();
         try {
             Navigator.getInstance().goTo(View.ADMIN);
         } catch (Exception e) {

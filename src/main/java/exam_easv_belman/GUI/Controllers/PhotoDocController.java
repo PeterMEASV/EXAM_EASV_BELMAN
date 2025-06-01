@@ -8,8 +8,10 @@ import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
+import exam_easv_belman.GUI.util.TimerManager;
 import exam_easv_belman.GUI.util.View;
 import exam_easv_belman.GUI.util.AlertHelper;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,11 +21,16 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 import java.nio.file.Files;
@@ -31,6 +38,9 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 
@@ -42,6 +52,8 @@ public class PhotoDocController {
     private Button btnPrev;
 
     private String orderNumber;
+
+    private TimerManager timerManager;
 
 
     private boolean isProduct;
@@ -66,9 +78,17 @@ public class PhotoDocController {
     private int tagIndex;
     private ObservableList<Photo> orderOfPhotos;
 
+    @FXML
+    private Label lblUser;
+    private Timer inactivityTimer;
+    private TimerTask inactivityTimerTask;
+    @FXML
+    private Circle objStatus;
+
 
     @FXML
     private void initialize() throws Exception {
+
         additionalImagesFromDatabase = FXCollections.observableArrayList();
         orderOfPhotos = FXCollections.observableArrayList();
         productModel = new ProductModel();
@@ -85,9 +105,14 @@ public class PhotoDocController {
             DRPDown.setVisible(false);
         }
 
+        lblUser.setText(currentUser.getFirstName() + " " + currentUser.getLastName());
+        timerManager = new TimerManager(objStatus);
+        timerManager.initialize();
+
     }
 
     private void handleEmptyImage(String tag) {
+        timerManager.cleanup();
         System.out.println("tag opened: " + tag);
         Navigator.getInstance().goTo(View.CAMERA, controller -> {
             if(controller instanceof CameraController)
@@ -122,6 +147,7 @@ public class PhotoDocController {
 }
 private void handleImageClick(Photo photo) {
     try {
+        timerManager.cleanup();
         System.out.println("handleImageClick triggered with photo: " + photo);
         Navigator.getInstance().setRoot(View.IMG_VIEW, controller -> {
             if (controller instanceof ImageController) {
@@ -191,6 +217,7 @@ private void handleImageClick(Photo photo) {
             return;
         }
         try {
+            timerManager.cleanup();
             Navigator.getInstance().goTo(View.ORDER, controller -> {
                 if (controller instanceof SendViewController) {
                     try {
@@ -508,6 +535,7 @@ private void handleImageClick(Photo photo) {
     }
 
     public void handleUserManagement(ActionEvent actionEvent) {
+        timerManager.cleanup();
         try {
             Navigator.getInstance().goTo(View.ADMIN);
         } catch (Exception e) {
@@ -516,6 +544,7 @@ private void handleImageClick(Photo photo) {
     }
 
     public void handleOrder(ActionEvent actionEvent) {
+        timerManager.cleanup();
         try {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
@@ -524,6 +553,7 @@ private void handleImageClick(Photo photo) {
     }
 
     public void handleQC(ActionEvent actionEvent) {
+        timerManager.cleanup();
         try {
             Navigator.getInstance().setRoot(View.QCView, controller -> {
                 if (controller instanceof QCController) {
@@ -554,6 +584,4 @@ private void handleImageClick(Photo photo) {
 
         return "-fx-background-color: rgba(0, 0, 0, 0.7);";
     }
-
-
 }

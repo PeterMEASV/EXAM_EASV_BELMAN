@@ -6,22 +6,18 @@ import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
+import exam_easv_belman.GUI.util.TimerManager;
 import exam_easv_belman.GUI.util.View;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Circle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 public class OrderController {
@@ -31,6 +27,8 @@ public class OrderController {
     private TextField OrderNumber;
 
     private final String ORDER_REGEX = "ORD-\\d{4}(-\\d{3})?";
+
+    private TimerManager timerManager;
 
 
     //TODO take orders from db not just these hardcoded values
@@ -42,7 +40,10 @@ public class OrderController {
     private Button btnSearch;
     @FXML
     private Button btnLogOut;
-
+    @FXML
+    private Circle objStatus;
+    @FXML
+    private Label lblUser;
 
 
     @FXML
@@ -84,8 +85,9 @@ public class OrderController {
             }
         });
 
-
-
+        lblUser.setText(currentUser.getFirstName() + " " + currentUser.getLastName());
+        timerManager = new TimerManager(objStatus);
+        timerManager.initialize();
 
     }
 
@@ -104,6 +106,8 @@ public class OrderController {
             AlertHelper.showAlert("Error", "The order/product number entered does not exist", Alert.AlertType.ERROR);
             return;
         }
+
+        timerManager.cleanup();
 
         int dashCount = inputOrderNumber.length() - inputOrderNumber.replace("-", "").length();
 

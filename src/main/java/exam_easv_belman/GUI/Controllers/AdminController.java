@@ -6,6 +6,7 @@ import exam_easv_belman.GUI.Models.UserModel;
 import exam_easv_belman.GUI.util.AlertHelper;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
+import exam_easv_belman.GUI.util.TimerManager;
 import exam_easv_belman.GUI.util.View;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -70,6 +72,11 @@ public class AdminController implements Initializable {
 
     private UserModel userModel;
     private User selectedUser;
+    @FXML
+    private Circle objStatus;
+    @FXML
+    private Label lblUser;
+    private TimerManager timerManager;
 
 
     public AdminController() {
@@ -138,7 +145,9 @@ public class AdminController implements Initializable {
             btnUpdateUser.setVisible(true);
         });
 
-
+    lblUser.setText(SessionManager.getInstance().getCurrentUser().getFirstName() + " " + SessionManager.getInstance().getCurrentUser().getLastName());
+    timerManager = new TimerManager(objStatus);
+    timerManager.initialize();
     }
 
     @FXML
@@ -386,6 +395,7 @@ public class AdminController implements Initializable {
 
     @FXML
     private void handleOperator(ActionEvent actionEvent) {
+        timerManager.cleanup();
         try {
                 Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
                     if (controller instanceof PhotoDocController) {
@@ -406,6 +416,7 @@ public class AdminController implements Initializable {
 
     @FXML
     public void handleQC(ActionEvent actionEvent) {
+        timerManager.cleanup();
         try {
             Navigator.getInstance().setRoot(View.QCView, controller -> {
                 if (controller instanceof QCController) {
