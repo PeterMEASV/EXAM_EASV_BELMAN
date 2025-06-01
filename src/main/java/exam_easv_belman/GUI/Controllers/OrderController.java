@@ -1,14 +1,17 @@
 package exam_easv_belman.GUI.Controllers;
 
+import exam_easv_belman.BE.Order;
 import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.BLL.OrderManager;
 import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
 import exam_easv_belman.GUI.util.TimerManager;
 import exam_easv_belman.GUI.util.View;
 import exam_easv_belman.GUI.util.AlertHelper;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -32,7 +35,11 @@ public class OrderController {
 
 
     //TODO take orders from db not just these hardcoded values
-    private final List<String> orders = Arrays.asList("1001", "1002", "1003", "ORD-1001");
+    //private final List<String> orders = Arrays.asList("1001", "1002", "1003", "ORD-1001");
+    private List<String> availableOrderNumbers;
+
+    private OrderManager orderManager;
+
     private List<Product> products;
     private List<String> productNames;
     private ProductModel productModel;
@@ -57,6 +64,20 @@ public class OrderController {
             String tempName = product.getProduct_number();
             productNames.add(tempName);
         }
+
+        availableOrderNumbers = new ArrayList<>();
+        try {
+            orderManager = new OrderManager();
+            ObservableList<Order> fetchedOrders = orderManager.getAllOrders();
+            for (Order order : fetchedOrders) {
+                if (order.getOrderNumber() != null && !order.getOrderNumber().isEmpty()) {
+                    availableOrderNumbers.add(order.getOrderNumber());
+                }
+            }
+        } catch (Exception e) {
+            AlertHelper.showAlert("Database Error", "Could not load order numbers from the database: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-search.png")));
         ImageView imgView = new ImageView(img);
         btnSearch.setGraphic(imgView);
@@ -101,7 +122,7 @@ public class OrderController {
             return;
         }
 
-        if (!orders.contains(inputOrderNumber) && !productNames.contains(inputOrderNumber)) {
+        if (!availableOrderNumbers.contains(inputOrderNumber) && !productNames.contains(inputOrderNumber)) {
 
             AlertHelper.showAlert("Error", "The order/product number entered does not exist", Alert.AlertType.ERROR);
             return;

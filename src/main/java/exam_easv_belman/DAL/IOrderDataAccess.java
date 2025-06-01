@@ -1,8 +1,13 @@
 package exam_easv_belman.DAL;
 
+import exam_easv_belman.BE.Order;
+import javafx.collections.ObservableList;
+
 import java.sql.SQLException;
 
 public interface IOrderDataAccess {
+
+     ObservableList<Order> getAllOrders() throws  SQLException;
 
      String getEmailForOrder(String orderNumber) throws SQLException;
 

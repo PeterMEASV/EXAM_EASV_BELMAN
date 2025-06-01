@@ -1,14 +1,19 @@
 package exam_easv_belman.DAL;
 
+import exam_easv_belman.BE.Order;
 import exam_easv_belman.GUI.util.AlertHelper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 public class OrderDAO implements IOrderDataAccess {
+
     private DBConnector dbConnector;
 
     public OrderDAO() throws Exception {
@@ -97,5 +102,25 @@ public class OrderDAO implements IOrderDataAccess {
                 return null;
             }
              }
+    }
+
+    public ObservableList<Order> getAllOrders() throws SQLException {
+        ObservableList<Order> orders = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM dbo.Orders";
+        try (Connection conn = dbConnector.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Order order = new Order();
+                order.setId(rs.getInt("id"));
+                order.setOrderNumber(rs.getString("order_number"));
+                order.setCustomerEmail(rs.getString("customer_email"));
+                order.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                order.setComment(rs.getString("comment"));
+                orders.add(order);
+            }
+        }
+        return orders;
+
     }
 }

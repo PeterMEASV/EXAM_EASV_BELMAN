@@ -1,7 +1,9 @@
 package exam_easv_belman.BLL;
 
+import exam_easv_belman.BE.Order;
 import exam_easv_belman.DAL.IOrderDataAccess;
 import exam_easv_belman.DAL.OrderDAO;
+import javafx.collections.ObservableList;
 
 import java.sql.SQLException;
 
@@ -23,5 +25,9 @@ public class OrderManager {
 
     public String getCommentForOrder(String orderNumber) throws SQLException {
         return orderDataAccess.getCommentForOrder(orderNumber);
+    }
+
+    public ObservableList<Order> getAllOrders() throws SQLException {
+        return orderDataAccess.getAllOrders();
     }
 }
