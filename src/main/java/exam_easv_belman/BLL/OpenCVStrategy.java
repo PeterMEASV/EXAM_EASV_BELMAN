@@ -29,7 +29,6 @@ public class OpenCVStrategy implements PhotoStrategy {
 
         if (!camera.isOpened()) {
             throw new CameraNotFoundException();
-            //TODO custom exception and alert the user in the gui layer, say CAMERA NOT FOUND or smth
         }
     }
 

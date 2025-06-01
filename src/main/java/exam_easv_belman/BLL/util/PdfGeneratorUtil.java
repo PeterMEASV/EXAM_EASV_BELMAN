@@ -43,6 +43,22 @@ import java.io.File;
 
 public class PdfGeneratorUtil {
 
+    /**
+     * Generates a PDF quality control report for a given order, including product information,
+     * associated photos, and general comments. Compresses images before embedding and includes
+     * metadata such as uploader name, timestamps, and comments.
+     *
+     * @param filePath         The destination path where the PDF will be saved.
+     * @param email            The email of the user generating the report (used in footer metadata).
+     * @param comment          General comments about the order to include in the report.
+     * @param orderNumber      The order number associated with the report.
+     * @param productModel     Model used to fetch products associated with the order.
+     * @param photoManager     Manager used to retrieve images and user metadata for products.
+     * @param qcName           Name of the quality control person preparing the report.
+     * @param qcSignaturePath  Path to the QC person's signature image (added in the footer).
+     * @param opName           Name(s) of the operator(s) involved in the order.
+     * @throws Exception If any error occurs during PDF generation or image processing.
+     */
     public static void generatePdf(String filePath,
                                    String email,
                                    String comment,
@@ -188,6 +204,18 @@ public class PdfGeneratorUtil {
         document.close();
     }
 
+    /**
+     * Adds a footer to the last page of the given PDF document. The footer includes the email address
+     * of the report generator and, optionally, a signature image for the QC personnel.
+     *
+     * The footer content is aligned to the bottom of the page. If a QC signature image path is
+     * provided, it will be displayed alongside a "Signed by:" label on the left side of the footer.
+     * The email will appear on the bottom-right of the page.
+     *
+     * @param pdfDocument The PDF document to which the footer will be added.
+     * @param email The email address of the person generating the report.
+     * @param qcSignaturePath File path to the signature image of the quality controller. If null or empty, no signature is added.
+     */
     private static void addFooter(PdfDocument pdfDocument, String email, String qcSignaturePath) {
         PdfPage page = pdfDocument.getLastPage();
         Rectangle pageSize = page.getPageSize();
@@ -241,7 +269,19 @@ public class PdfGeneratorUtil {
     }
 
 
-
+    /**
+     * Retrieves a sorted list of unique operator names who uploaded photos
+     * associated with the given list of products for an order.
+     *
+     * This method collects all uploader names by retrieving the photos linked to each product
+     * and then fetching the user information for each uploader. Only unique names are returned,
+     * sorted alphabetically.
+     *
+     * @param productsForOrder The list of products for which to collect uploader information.
+     * @param photoManager The photo manager used to retrieve photos and user data.
+     * @return A sorted list of unique operator full names (e.g., "John Doe").
+     * @throws Exception If an error occurs while fetching photos or user data.
+     */
     public static List<String> getUniqueOperators(ObservableList<Product> productsForOrder,
                                                   PhotoManager photoManager) throws Exception {
         Set<String> operatorNames = new HashSet<>();

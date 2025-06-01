@@ -21,6 +21,17 @@ import java.util.Objects;
 
 public class PdfPreviewUtil {
 
+    /**
+     * Displays a preview of the given PDF file in a new JavaFX window.
+     * <p>
+     * Each page of the PDF is rendered as an image using PDFBox and displayed inside a vertically scrollable view.
+     * The preview window will close automatically if the user clicks anywhere on the owner window.
+     * </p>
+     *
+     * @param pdfFile    The PDF file to preview.
+     * @param ownerStage The parent stage that owns the preview window.
+     * @throws IOException If an error occurs while loading or rendering the PDF file.
+     */
     public static void showPdfPreview(File pdfFile, Stage ownerStage) throws IOException{
         PDDocument document = PDDocument.load(pdfFile);
         PDFRenderer pdfRenderer = new PDFRenderer(document);

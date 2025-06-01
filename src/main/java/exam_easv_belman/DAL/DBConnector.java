@@ -13,6 +13,16 @@ public class DBConnector {
     private static final String PROPERTY_FILE = "config/database.settings";
     private static SQLServerDataSource dataSource;
 
+    /**
+     * Constructs a DBConnector and initializes the database connection pool.
+     *
+     * This constructor reads database connection details (server, database name,
+     * username, and password) from config/database.settings. It then configures a
+     * SQLServerDataSource with these properties, setting the port to 1433
+     * and enabling server certificate trust.
+     *
+     * @throws IOException If an error occurs while reading the properties file.
+     */
     public DBConnector() throws IOException {
 
 
@@ -28,6 +38,7 @@ public class DBConnector {
         dataSource.setTrustServerCertificate(true);
 
     }
+
     public Connection getConnection() throws SQLServerException {
         return dataSource.getConnection();
     }

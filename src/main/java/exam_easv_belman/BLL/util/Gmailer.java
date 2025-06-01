@@ -56,6 +56,15 @@ public class Gmailer {
 
     }
 
+    /**
+     * Loads Google API credentials from the client_secrets.json file and handles the OAuth 2.0 authorization flow.
+     * This method is used to authorize the application to access the Gmail API on behalf of the user.
+     *
+     * @param httpTransport The transport layer used for secure HTTP communication.
+     * @param jsonFactory   The JSON factory used to parse client secrets.
+     * @return A Credential object representing the authorized user's access token.
+     * @throws IOException If the client_secrets.json file cannot be read or an error occurs during authorization.
+     */
     private static Credential getCredentials(final NetHttpTransport httpTransport, GsonFactory jsonFactory)
             throws IOException {
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(jsonFactory, new InputStreamReader(Gmailer.class.getResourceAsStream("/client_secrets.json")));
@@ -70,6 +79,17 @@ public class Gmailer {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
+    /**
+     * Sends an email with a subject, message body, and PDF attachment using the Gmail API.
+     *
+     * @param subject        The subject line of the email.
+     * @param message        The plain text message body.
+     * @param toEmailAddress The recipient's email address.
+     * @param attachment     A PDF file to attach to the email.
+     * @throws GeneralSecurityException If a security issue occurs during Gmail API access.
+     * @throws IOException              If an IO error occurs during message construction or sending.
+     * @throws MessagingException       If an error occurs when creating or sending the email message.
+     */
     public void sendMail(String subject, String message, String toEmailAddress, File attachment) throws GeneralSecurityException, IOException, MessagingException {
 
         // Encode as MIME message

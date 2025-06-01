@@ -14,7 +14,11 @@ public class SessionManager {
 
     private SessionManager() {}
 
-
+/**
+ * Returns the singleton instance of the SessionManager.
+ * This method ensures that only one instance of SessionManager is created
+ * @return The single instance of SessionManager.
+ */
     public static SessionManager getInstance() {
         //if the instance is null at the time of accessing enter if statement
         if (instance == null) {
@@ -54,11 +58,12 @@ public class SessionManager {
     }
 
 
-    //TODO remove souts when this works
+    /**
+     * Logs out the current user from the session.
+     * This method clears the current user's information
+     */
     public void logout() {
-        System.out.println(currentUser + " logged out");
         currentUser = null;
-        System.out.println("Logged out successfully");
         currentOrderNumber.set(null);
 
     }

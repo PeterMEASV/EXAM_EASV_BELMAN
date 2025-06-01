@@ -41,7 +41,16 @@ public class PhotoDAO implements IPhotoDataAccess{
 
     }
 
-
+    /**
+     * Saves a list of images to the file system and records their metadata in the database.
+     * @param photos
+     * @param fileNames
+     * @param uploader
+     * @param productNumber
+     * @param tag
+     * @return
+     * @throws Exception
+     */
     public boolean saveImageAndPath(List<BufferedImage> photos,
                                     List<String> fileNames,
                                     User uploader,
