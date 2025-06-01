@@ -11,6 +11,12 @@ public class AlertHelper {
 
     }
 
+    /**
+     * An alert that shows a dialog window with the given title and content.
+     * @param title - Title of the alert.
+     * @param content Text shown in the alert.
+     * @param alertType Type of the alert.
+     */
     public static void showAlert(String title, String content, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

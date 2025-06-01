@@ -44,6 +44,10 @@ public class Navigator {
         stage.show();
     }
 
+    /**
+     * Navigates to the specified view.
+     * @param view The view to navigate to.
+     */
     public void goTo(View view) {
         try {
             // Store current window dimensions
@@ -100,6 +104,11 @@ public class Navigator {
         }
     }
 
+    /**
+     * Sets the root of the application.
+     * @param view The view to set as the root.
+     * @param controllerConsumer consumer object
+     */
     public void setRoot(View view, Consumer<Object> controllerConsumer) {
         try {
             // Store current window dimensions

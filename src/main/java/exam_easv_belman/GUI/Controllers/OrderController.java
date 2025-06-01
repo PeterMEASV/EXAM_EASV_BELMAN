@@ -142,6 +142,12 @@ public class OrderController {
 
     }
 
+    /**
+     * goes to PhotoDocView
+     * @param event
+     * @param orderNumber the order number from SessionManger
+     * @param IsProduct Boolean to see if a product exists
+     */
     private void GoToPhotoDocView(ActionEvent event, String orderNumber, boolean IsProduct ){
         try {
             Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {

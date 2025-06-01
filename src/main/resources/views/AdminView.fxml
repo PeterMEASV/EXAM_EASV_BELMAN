@@ -188,7 +188,7 @@
                         <TextField fx:id="txtPhone" promptText="phone" />
                         <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="438.0">
                            <children>
-                              <Button fx:id="btnSignatur" mnemonicParsing="false" onAction="#handleSetSignatur" style="-fx-font-size: 14;" stylesheets="@../css/general.css" text="Assign Signatur" visible="false">
+                              <Button fx:id="btnSignatur" mnemonicParsing="false" onAction="#handleSetSignature" style="-fx-font-size: 14;" stylesheets="@../css/general.css" text="Assign Signatur" visible="false">
                                  <HBox.margin>
                                     <Insets right="20.0" />
                                  </HBox.margin>

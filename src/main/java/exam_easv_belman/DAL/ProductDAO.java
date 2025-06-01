@@ -20,6 +20,11 @@ public class ProductDAO implements IProductDataAccess {
         dbConnector = new DBConnector();
     }
 
+    /**
+     * Gets all products from the database.
+     * @return a list of all products in the database
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public ObservableList<Product> getAllProducts() throws SQLException {
         ObservableList<Product> products = FXCollections.observableArrayList();
@@ -41,6 +46,12 @@ public class ProductDAO implements IProductDataAccess {
         return products;
     }
 
+    /**
+     * Gets all products related to a specific order from the database.
+     * @param orderNumber the order number for which to retrieve products
+     * @return an ObservableList of Product objects
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public ObservableList<Product> getProductsForOrder(String orderNumber) throws SQLException {
         Order order = getOrderForNumber(orderNumber);
@@ -61,6 +72,12 @@ public class ProductDAO implements IProductDataAccess {
     return productsList;
     }
 
+    /**
+     * Gets an order from the database based on its order number.
+     * @param orderNumber the order number for which to retrieve the order
+     * @return the Order object if found, otherwise null
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public Order getOrderForNumber(String orderNumber) throws SQLException {
         Order tempOrder = new Order();

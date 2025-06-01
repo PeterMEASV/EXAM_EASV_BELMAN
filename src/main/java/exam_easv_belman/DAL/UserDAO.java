@@ -23,6 +23,12 @@ public class UserDAO implements IUserDataAccess {
         dbConnector = new DBConnector();
     }
 
+    /**
+     * finds a user by their username in the database
+     * @param username the username of the user to find
+     * @return the user that was found
+     * @throws Exception if an error occurs during the database operation
+     */
     @Override
     public User findByUsername(String username) throws Exception {
         String sql = "SELECT * FROM dbo.Users WHERE username = ?";
@@ -56,6 +62,12 @@ public class UserDAO implements IUserDataAccess {
         return null;
     }
 
+    /**
+     * creates a new user in the database
+     * @param user the user to create
+     * @return the user that was created
+     * @throws Exception if an error occurs during the database operation
+     */
     @Override
     public User createUser(User user) throws Exception {
 
@@ -96,6 +108,10 @@ public class UserDAO implements IUserDataAccess {
         }
     }
 
+    /**
+     * deletes a user from the database
+     * @param user the user to delete
+     */
     @Override
     public void deleteUser(User user) {
         String sql = "DELETE FROM Users WHERE id = ?";
@@ -113,6 +129,11 @@ public class UserDAO implements IUserDataAccess {
 
     }
 
+    /**
+     * gets all users from the database
+     * @return a list of all users in the database
+     * @throws Exception if an error occurs during the database operation
+     */
     @Override
     public ObservableList<User> getAllUsers() throws Exception {
 
@@ -149,6 +170,11 @@ public class UserDAO implements IUserDataAccess {
         }
     }
 
+    /**
+     * Updates a user in the database.
+     * @param user the user to update
+     * @throws SQLServerException if an error occurs during the database operation
+     */
     @Override
     public void updateUser(User user) throws SQLServerException {
 
@@ -174,6 +200,11 @@ public class UserDAO implements IUserDataAccess {
         }
     }
 
+    /**
+     * Attaches a signature to a user in the database.
+     * @param user the user for which to attach the signature
+     * @throws Exception if an error occurs during the database operation
+     */
     public void attachSignature(User user) throws Exception {
         String sql = "UPDATE Users SET signature_path = ? WHERE id = ?";
 

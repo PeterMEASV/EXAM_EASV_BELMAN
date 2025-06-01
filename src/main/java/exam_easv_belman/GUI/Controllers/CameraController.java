@@ -145,6 +145,11 @@ public class CameraController implements Initializable {
         });
     }
 
+    /**
+     * adjusts the image size to fit the container
+     * @param imageView the image to adjust
+     * @param container the container to fit the image in
+     */
     private void adjustImage(ImageView imageView, StackPane container) {
         Image frame = imageView.getImage();
         double paneHeight = container.getHeight();

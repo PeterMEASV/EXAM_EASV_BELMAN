@@ -150,12 +150,20 @@ public class AdminController implements Initializable {
     timerManager.initialize();
     }
 
+    /**
+     * logs the user out
+     * @param actionEvent the event that triggered this method
+     */
     @FXML
     public void handleLogout(ActionEvent actionEvent) {
         Navigator.getInstance().goTo(View.LOGIN);
         SessionManager.getInstance().logout();
     }
 
+    /**
+     * creates a new user
+     * @param actionEvent the event that triggered this method
+     */
     @FXML
     private void handleCreateUser(ActionEvent actionEvent) {
         Object controllerObj = Navigator.getInstance().showModal(View.USER_CREATION_MODAL);
@@ -179,6 +187,10 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * Sets the users information in the text fields
+     * @param selectedUser
+     */
     private void setUserInfo(User selectedUser) {
         if (selectedUser != null) {
             this.selectedUser = selectedUser;
@@ -191,6 +203,10 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * deletes selected user from the database
+     * @param actionEvent the event that triggered this method
+     */
     @FXML
     public void handleDeleteUser(ActionEvent actionEvent) {
         User selectedUser = lstUsers.getSelectionModel().getSelectedItem();
@@ -218,6 +234,9 @@ public class AdminController implements Initializable {
 
     }
 
+    /**
+     * populates the user list with all users from the database
+     */
     private void populateUserList() {
         ObservableList<User> users = FXCollections.observableArrayList();
         try {
@@ -238,6 +257,9 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * Sets up the cell factory for the list view.
+     */
     private void setupCellFactory() {
         lstUsers.setCellFactory(param -> new ListCell<User>() {
             @Override
@@ -268,6 +290,10 @@ public class AdminController implements Initializable {
         });
     }
 
+    /**
+     * generates a random string for the qrKey of the user
+     * @return the generated string
+     */
     private String generateRandomString() {
         //Lists all the possible symbols in generation:
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -287,6 +313,10 @@ public class AdminController implements Initializable {
 
     }
 
+    /**
+     * opens up a dialog with the qrKey of the user
+     * @param qrKey the qrKey of the user
+     */
     private void showCopyableQRCode(String qrKey) {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("QR Code");
@@ -320,7 +350,12 @@ public class AdminController implements Initializable {
         dialog.showAndWait();
     }
 
-    public void handleSetSignatur(ActionEvent actionEvent) throws IOException {
+    /**
+     * Sets the signature for the selected user.
+     * @param actionEvent the event that triggered this method
+     * @throws IOException if an error occurs while setting the signature
+     */
+    public void handleSetSignature(ActionEvent actionEvent) throws IOException {
         if (selectedUser != null && selectedUser.getRole() == Role.QC) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select Signature File");
@@ -364,6 +399,10 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * sends the user to the orderView
+     * @param actionEvent the event that triggered this method
+     */
     public void handleOrder(ActionEvent actionEvent) {
         try {
             Navigator.getInstance().goTo(View.ORDER);
@@ -372,6 +411,10 @@ public class AdminController implements Initializable {
         }
     }
 
+    /**
+     * updates the user in the database
+     * @param actionEvent the event that triggered this method
+     */
     @FXML
     private void handleUpdateUser(ActionEvent actionEvent) {
         AlertHelper.showConfirmationAlert("Update User", "Are you sure you want to update" + selectedUser.getUsername(), () ->{
@@ -393,6 +436,10 @@ public class AdminController implements Initializable {
         });
     }
 
+    /**
+     * sends the user to the photoDocView
+     * @param actionEvent the event that triggered this method
+     */
     @FXML
     private void handleOperator(ActionEvent actionEvent) {
         timerManager.cleanup();
@@ -414,6 +461,10 @@ public class AdminController implements Initializable {
 
     }
 
+    /**
+     * sends the user to the QCView
+     * @param actionEvent the event that triggered this method
+     */
     @FXML
     public void handleQC(ActionEvent actionEvent) {
         timerManager.cleanup();

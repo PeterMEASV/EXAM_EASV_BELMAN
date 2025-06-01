@@ -11,7 +11,7 @@ import exam_easv_belman.BLL.util.SessionManager;
 import exam_easv_belman.GUI.util.TimerManager;
 import exam_easv_belman.GUI.util.View;
 import exam_easv_belman.GUI.util.AlertHelper;
-import javafx.application.Platform;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,15 +21,14 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.effect.DropShadow;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
@@ -38,8 +37,7 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -79,9 +77,7 @@ public class PhotoDocController {
     private ObservableList<Photo> orderOfPhotos;
 
     @FXML
-    private Label lblUser;
-    private Timer inactivityTimer;
-    private TimerTask inactivityTimerTask;
+    private Label lblUser;;
     @FXML
     private Circle objStatus;
 
@@ -111,6 +107,7 @@ public class PhotoDocController {
 
     }
 
+
     private void handleEmptyImage(String tag) {
         timerManager.cleanup();
         System.out.println("tag opened: " + tag);
@@ -121,6 +118,7 @@ public class PhotoDocController {
             }
         });
     }
+
 
     private Photo getPhotoWithTag(int tagIndex) {
         for(Photo photo : imagesFromDatabase)

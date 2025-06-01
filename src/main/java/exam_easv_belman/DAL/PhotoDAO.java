@@ -102,6 +102,14 @@ public class PhotoDAO implements IPhotoDataAccess{
         }
     }
 
+    /**
+     * Saves a list of images to the file system.
+     * @param photos a list of images to be saved
+     * @param fileNames a list of corresponding file names
+     * @param orderFolderPath the path where the images should be saved
+     * @return a list of paths to the saved images
+     * @throws IOException if an error occurs while saving the images
+     */
     private List<Path> saveImages(List<BufferedImage> photos,
                                   List<String> fileNames,
                                   Path orderFolderPath) throws IOException {
@@ -139,6 +147,10 @@ public class PhotoDAO implements IPhotoDataAccess{
        }
     }
 
+    /**
+     * Deletes the specified directory and all its contents recursively.
+     * @param tempDir The path to the directory that needs to be deleted recursively
+     */
     private void deleteRecursively(Path tempDir) {
         if (tempDir == null || Files.notExists(tempDir)) {
             return;
@@ -158,6 +170,10 @@ public class PhotoDAO implements IPhotoDataAccess{
         }
     }
 
+    /**
+     * Deletes the specified files from the file system.
+     * @param movedFilePaths The list of paths to the files that need to be deleted
+     */
     private void deleteFiles(List<Path> movedFilePaths) {
         for (Path path : movedFilePaths) {
              try {
@@ -170,6 +186,18 @@ public class PhotoDAO implements IPhotoDataAccess{
     }
 
 
+    /**
+     * Inserts metadata for multiple image files into the Photos database table.
+     * This method performs a batch insert, recording for each image its associated product ID,
+     * file path, uploader ID, the current timestamp as upload time, a descriptive tag,
+     * and an initial verification state set to 0.
+     * @param connection
+     * @param filePaths
+     * @param uploader
+     * @param product
+     * @param tag
+     * @throws SQLException
+     */
     @Override
     public void insertImagePathToDatabase(Connection connection,
                                           List<Path> filePaths,
@@ -193,6 +221,12 @@ public class PhotoDAO implements IPhotoDataAccess{
         }
     }
 
+    /**
+     * Gets all photos related with a specific product from the database.
+     * @param productNumber the product number for which to retrieve photos
+     * @return an ObservableList of Photo objects
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public ObservableList<Photo> getImagesForProduct(String productNumber) throws SQLException {
         ObservableList<Photo> photos = javafx.collections.FXCollections.observableArrayList();
@@ -221,9 +255,14 @@ public class PhotoDAO implements IPhotoDataAccess{
         }
     }
 
+    /**
+     * Gets all photos related to a specific order from the database.
+     * @param orderNumber the order number for which to retrieve photos
+     * @return an ObservableList of Photo objects
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public ObservableList<Photo> getImagesForOrder(String orderNumber) throws SQLException {
-        //todo: make this??
         ObservableList<Photo> photos = FXCollections.observableArrayList();
 
         // Query database for photos matching the order number
@@ -254,6 +293,11 @@ public class PhotoDAO implements IPhotoDataAccess{
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
     }
 
+    /**
+     * Extracts the product number from an order number.
+     * @param orderNumber the order number from which to extract the product number
+     * @return the extracted product number as an integer
+     */
     private int extractProductNumber(String orderNumber) {
         try {
 
@@ -266,7 +310,12 @@ public class PhotoDAO implements IPhotoDataAccess{
     }
 
 
-
+    /**
+     * Retrieves a Product from the database based on its product number.
+     * @param productNumber the product number to search for
+     * @return the Product object if found, otherwise null
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public Product getProductFromNumber(String productNumber) throws SQLException {
         Product product = new Product();
@@ -284,6 +333,12 @@ public class PhotoDAO implements IPhotoDataAccess{
 
     }
 
+    /**
+     * Adds or updates a comment for a specific photo in the database.
+     * @param comment the comment text to be added to the photo
+     * @param photo the photo to update
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public void addCommentToPhoto(String comment, Photo photo) throws SQLException {
         String sql = "UPDATE Photos SET comment = ? WHERE id = ?";
@@ -295,6 +350,12 @@ public class PhotoDAO implements IPhotoDataAccess{
         }
     }
 
+    /**
+     * Changes the verification state of a photo in the database.
+     * @param photo the photo to update
+     * @param approval the new verification state
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public void changeVeirfyState(Photo photo, int approval) throws SQLException {
         String sql = "UPDATE Photos SET verify_state = ? WHERE id = ?";
@@ -309,6 +370,11 @@ public class PhotoDAO implements IPhotoDataAccess{
         }
     }
 
+    /**
+     * Deletes a photo from the database and the file system.
+     * @param photo the photo to delete
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public void deleteImageFromDatabase(Photo photo) throws SQLException {
         String sql = "DELETE FROM Photos WHERE id = ?";
