@@ -99,6 +99,10 @@ public class QCController implements Initializable {
                 }
             }
             int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
+            if(pageCount == 1 && !additionalImagesFromDatabase.isEmpty())
+            {
+                pageCount+=1;
+            }
             pagination.setPageCount(pageCount);
             pagination.setPageFactory(this::fillPhotoGrid);
         }
@@ -308,6 +312,8 @@ public class QCController implements Initializable {
 
         Stage stage = new Stage();
         stage.setTitle("Add comment");
+        String imgPath = Objects.requireNonNull(getClass().getResource("/Images/BELMAN_Logo_264pxl.png")).toExternalForm();
+        stage.getIcons().add(new Image(imgPath));
         stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();

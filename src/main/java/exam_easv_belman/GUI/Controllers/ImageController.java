@@ -252,6 +252,8 @@ public class ImageController implements Initializable {
 
             Stage stage = new Stage();
             stage.setTitle("Add comment");
+            String imgPath = Objects.requireNonNull(getClass().getResource("/Images/BELMAN_Logo_264pxl.png")).toExternalForm();
+            stage.getIcons().add(new Image(imgPath));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(btnComment.getScene().getWindow());

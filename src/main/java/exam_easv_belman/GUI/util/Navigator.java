@@ -3,6 +3,7 @@ package exam_easv_belman.GUI.util;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -36,6 +37,9 @@ public class Navigator {
         stage = primaryStage;
         stage.setWidth(1200);
         stage.setHeight(750);
+        String imgPath = Objects.requireNonNull(getClass().getResource("/Images/BELMAN_Logo_264pxl.png")).toExternalForm();
+        stage.getIcons().add(new Image(imgPath));
+        stage.setTitle("Photo Documentation System");
         goTo(View.LOGIN);
         stage.show();
     }
