@@ -1,5 +1,6 @@
 package exam_easv_belman.GUI.util;
 
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -69,7 +70,7 @@ public class Navigator {
             
             stage.centerOnScreen();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("goTo failed", e);
         }
     }
 
@@ -100,7 +101,7 @@ public class Navigator {
                 controllerConsumer.accept(currentController);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("goTo failed", e);
         }
     }
 
@@ -135,7 +136,7 @@ public class Navigator {
 
             stage.centerOnScreen();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("setRoot failed", e);
         }
     }
 
@@ -153,8 +154,7 @@ public class Navigator {
 
             return loader.getController();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new BelmanGUIException("showModal failed", e);
         }
     }
 }

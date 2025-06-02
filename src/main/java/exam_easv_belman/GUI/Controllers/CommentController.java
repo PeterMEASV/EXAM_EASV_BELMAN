@@ -2,6 +2,7 @@ package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Role;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.BLL.util.SessionManager;
 import exam_easv_belman.GUI.util.AlertHelper;
@@ -31,7 +32,7 @@ public class CommentController implements Initializable {
             photoModel = new PhotoModel();
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Could not create photo model.", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            throw new BelmanGUIException("error creating CommentController", e);
         }
     }
 

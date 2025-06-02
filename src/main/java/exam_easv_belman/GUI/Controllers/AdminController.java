@@ -2,6 +2,7 @@ package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.GUI.Models.UserModel;
 import exam_easv_belman.GUI.util.AlertHelper;
 import exam_easv_belman.GUI.util.Navigator;
@@ -83,8 +84,8 @@ public class AdminController implements Initializable {
         try {
             userModel = new UserModel();
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load UserModel", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to initialize UserModel", e);
         }
     }
 
@@ -179,8 +180,8 @@ public class AdminController implements Initializable {
                     lstUsers.getItems().add(user);
                     lstUsers.getSelectionModel().select(user);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     AlertHelper.showAlert("Error", "An error occurred while attempting to create the user.", Alert.AlertType.ERROR);
+                    throw new BelmanGUIException("Failed to create new user", e);
                 }
             }
 
@@ -225,10 +226,9 @@ public class AdminController implements Initializable {
             // Refresh the user list
             populateUserList();
         } catch (Exception e) {
-            e.printStackTrace();
 
-            // Show an error alert
             AlertHelper.showAlert("Error", "An error occurred while attempting to delete the user.", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to delete user", e);
 
         }});
 
@@ -243,8 +243,8 @@ public class AdminController implements Initializable {
 
             users = userModel.getAllUsers();
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error","Unable to PopulateUserList.", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to populate user list", e);
         }
 
         if (users == null) {
@@ -386,12 +386,8 @@ public class AdminController implements Initializable {
                     alert.setContentText("Signature has been successfully set!");
                     alert.showAndWait();
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Failed to save the signature: " + e.getMessage());
-                    alert.showAndWait();
+                    AlertHelper.showAlert("Error", "An error occurred while attempting to set the signature.", Alert.AlertType.ERROR);
+                    throw new BelmanGUIException("Failed to set signature", e);
                 }
             }
         }
@@ -405,7 +401,7 @@ public class AdminController implements Initializable {
         try {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("Failed to load OrderView", e);
         }
     }
 
@@ -428,8 +424,8 @@ public class AdminController implements Initializable {
 
             userModel.updateUser(selectedUser, passwordChanged);
         } catch(Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "An error occurred while attempting to update the user.", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to update user", e);
         }
         });
     }
@@ -452,8 +448,8 @@ public class AdminController implements Initializable {
                     }
                 });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load PhotoDocView", e);
 
         }
 
@@ -472,13 +468,13 @@ public class AdminController implements Initializable {
                     try {
                         ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new BelmanGUIException("Failed to load QCView", e);
                     }
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load QCView", e);
 
         }
 

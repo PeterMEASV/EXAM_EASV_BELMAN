@@ -17,6 +17,7 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.Draft;
 import com.google.api.services.gmail.model.Message;
+import exam_easv_belman.BLL.exceptions.BelmanBLLException;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.activation.DataHandler;
@@ -131,6 +132,7 @@ public class Gmailer {
             GoogleJsonError error = e.getDetails();
             if (error.getCode() == 403) {
                 System.err.println("Unable to send message: " + e.getDetails());
+                throw new BelmanBLLException("Unable to send message: " + e.getDetails());
             } else {
                 throw e;
             }

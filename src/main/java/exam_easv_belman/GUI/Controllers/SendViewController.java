@@ -1,6 +1,7 @@
 package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BLL.QCReportManager;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.BLL.util.Gmailer;
 import exam_easv_belman.BLL.util.PdfPreviewUtil;
 import exam_easv_belman.GUI.Models.OrderModel;
@@ -71,11 +72,9 @@ public class SendViewController implements Initializable {
         }
         try {
             gMailer = new Gmailer();
-        } catch (GeneralSecurityException e) {
-            //todo fix exception handling
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (GeneralSecurityException | IOException e) {
+            AlertHelper.showAlert("Error", "Failed to initialize GMailer", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to initialize GMailer", e);
         }
         Image img = new Image(getClass().getResourceAsStream("/images/icon-back.png"));
         ImageView imgView = new ImageView(img);
@@ -98,12 +97,13 @@ public class SendViewController implements Initializable {
                         ((QCController) controller).setOrderNumber(orderNumber);
                     } catch (Exception e) {
                         AlertHelper.showAlert("Error", "Failed to load QCView (SendViewController.java)", Alert.AlertType.ERROR);
+                        throw new BelmanGUIException("Failed to load QCView (SendViewController.java)", e);
                     }
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load QCView", e);
         }
 
     }
@@ -132,7 +132,7 @@ public class SendViewController implements Initializable {
                 Platform.runLater(() -> 
                     AlertHelper.showAlert("Error", "Failed to preview the PDF", Alert.AlertType.ERROR)
                 );
-                e.printStackTrace();
+                throw new BelmanGUIException("Failed to preview the PDF", e);
             }
         });
 
@@ -145,8 +145,8 @@ public class SendViewController implements Initializable {
 
         executor.execute(previewTask);
     } catch (Exception e) {
-        e.printStackTrace();
         AlertHelper.showAlert("Error", "Failed generating the PDF. ERROR SVC134", Alert.AlertType.ERROR);
+        throw new BelmanGUIException("Failed generating the PDF. ERROR SVC134", e);
     }
 }
 
@@ -248,8 +248,8 @@ public void handleSend(ActionEvent actionEvent) {
                 SessionManager.getInstance().logout();
             });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load LoginView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load LoginView", e);
         }
     }
 }

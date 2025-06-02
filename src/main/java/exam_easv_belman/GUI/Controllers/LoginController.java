@@ -3,6 +3,7 @@ package exam_easv_belman.GUI.Controllers;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.OpenCVStrategy;
 import exam_easv_belman.BLL.PhotoStrategy;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.GUI.Models.UserModel;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
@@ -80,7 +81,7 @@ public class LoginController implements Initializable {
         try {
             userModel = new UserModel();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("Failed initializing UserModel", e);
         }
     }
 
@@ -108,9 +109,9 @@ public class LoginController implements Initializable {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
             applyErrorStyles();
             AlertHelper.showAlert("Failed to login", "Incorrect Username or Password",Alert.AlertType.INFORMATION);
+            throw new BelmanGUIException("Login failed", e);
         }
     }
 
@@ -196,8 +197,7 @@ public class LoginController implements Initializable {
             photoStrategy.start();
         } catch (Exception e)
         {
-            e.printStackTrace();
-            //Todo handle this :D
+            throw new BelmanGUIException("photoStrategy failed to start", e);
         }
         mainPreviewExecutor = Executors.newSingleThreadScheduledExecutor();
         mainPreviewExecutor.scheduleAtFixedRate(() -> {
@@ -210,8 +210,8 @@ public class LoginController implements Initializable {
                         try {
                             handleQRLogin(qrText);
                         } catch (Exception e) {
-                            e.printStackTrace();
                             AlertHelper.showAlert("Error", "Could not handle QRLogin (205)", Alert.AlertType.ERROR);
+                            throw new BelmanGUIException("Could not handle QRLogin", e);
                         }
 
                     });
@@ -221,7 +221,7 @@ public class LoginController implements Initializable {
                 Platform.runLater(() -> imgCamera.setImage(fxImage));
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new BelmanGUIException("PhotoStrategy failed to grab frame", e);
             }
             //30 fps
         }, 0, 33, TimeUnit.MILLISECONDS);
@@ -259,7 +259,6 @@ public class LoginController implements Initializable {
 
     private void handleQRLogin(String qrCode) throws Exception {
         stopCameraPreview();
-        System.out.println("M-M-MORTY YOU LITLE SHIT! MORTY! I FOUND IT! ITS " + qrCode);
         User user = userModel.authenticateUser(qrCode);
         SessionManager.getInstance().setCurrentUser(user);
         System.out.println(SessionManager.getInstance().getCurrentUser());
@@ -278,8 +277,8 @@ public class LoginController implements Initializable {
             }
             catch (Exception e)
             {
-                e.printStackTrace();
                 AlertHelper.showAlert("Error", "could not shut down the camera.", Alert.AlertType.ERROR);
+                throw new BelmanGUIException("Could not shut down the camera", e);
             }
         }
 
