@@ -115,8 +115,6 @@ public class QCController implements Initializable {
     populateMenu();
     }
 
-    //TODO remember to use product number properly.
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         orderOfPhotos = FXCollections.observableArrayList();

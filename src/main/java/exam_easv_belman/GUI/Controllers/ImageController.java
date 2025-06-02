@@ -89,7 +89,6 @@ public class ImageController implements Initializable {
         imageView.fitWidthProperty().bind(rootHBox.widthProperty().multiply(1-sidebarSize));
         imageView.fitHeightProperty().bind(rootHBox.heightProperty());
 
-        //todo sæt i sin egen metode. wtf.
         btnDelete.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
         btnDelete.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
         btnConfirm.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));

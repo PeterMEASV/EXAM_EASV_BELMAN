@@ -84,7 +84,7 @@ public class AdminController implements Initializable {
             userModel = new UserModel();
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO alert
+            AlertHelper.showAlert("Error", "Failed to load UserModel", Alert.AlertType.ERROR);
         }
     }
 
@@ -271,8 +271,6 @@ public class AdminController implements Initializable {
                 if (empty || item == null) {
                     return;
                 }
-
-                //TODO assign style classes in here
 
                 Label nameLabel = new Label(item.getFirstName() + " " + item.getLastName());
                 Label roleLabel;

@@ -73,12 +73,14 @@ public class LoginController implements Initializable {
     @FXML
     private StackPane stackCam;
 
+    private final String errorStyle ="-fx-border-color: red; -fx-border-width: 1px";
+
+
     public LoginController() {
         try {
             userModel = new UserModel();
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO alert
         }
     }
 
@@ -93,6 +95,10 @@ public class LoginController implements Initializable {
         String username = txtUsername.getText().trim();
         String rawPassword = txtPassword.getText().trim();
 
+        if (txtPasswordVisible.isVisible()) {
+            rawPassword = txtPasswordVisible.getText().trim();
+        }
+
         try {
             User user = userModel.authenticateUser(username, rawPassword);
             SessionManager.getInstance().setCurrentUser(user);
@@ -100,13 +106,20 @@ public class LoginController implements Initializable {
             //Navigator.getInstance().goTo(user.getRole() == Role.ADMIN ? View.ADMIN : View.ORDER);
             Navigator.getInstance().goTo(View.ORDER);
 
-            //TODO implement some sort of visual indicator when something fails, red outline or maybe a text (not popup
 
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO exception handling
+            applyErrorStyles();
+            AlertHelper.showAlert("Failed to login", "Incorrect Username or Password",Alert.AlertType.INFORMATION);
         }
     }
+
+    private void applyErrorStyles(){
+        txtUsername.setStyle(errorStyle);
+        txtPassword.setStyle(errorStyle);
+        txtPasswordVisible.setStyle(errorStyle);
+    }
+
 
 
     @Override
@@ -153,15 +166,7 @@ public class LoginController implements Initializable {
                 login();
             }
         });
-        //TODO remember this when password field is added
-        /*
-        txtPasswordVisible.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.ENTER) {
-                login();
-            }
-        });
 
-         */
     }
 
     @FXML

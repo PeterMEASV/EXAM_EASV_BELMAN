@@ -14,9 +14,6 @@ import java.util.List;
 
 public interface IPhotoDataAccess {
 
-    //TODO add the mandatory methods that have been implemented in PhotoDAO
-
-
     void insertImagePathToDatabase(Connection connection, List<Path> filePath, User uploader, Product product, String tag) throws SQLException;
 
     void deleteImageFromDatabase(Photo photo) throws SQLException;

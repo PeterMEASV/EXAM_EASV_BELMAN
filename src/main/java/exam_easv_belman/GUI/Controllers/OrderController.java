@@ -33,9 +33,6 @@ public class OrderController {
 
     private TimerManager timerManager;
 
-
-    //TODO take orders from db not just these hardcoded values
-    //private final List<String> orders = Arrays.asList("1001", "1002", "1003", "ORD-1001");
     private List<String> availableOrderNumbers;
 
     private OrderManager orderManager;

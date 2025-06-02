@@ -177,15 +177,9 @@ public class CameraController implements Initializable {
                 openOverlayPreview(0);
             }
 
-
-
-            //TODO 1. store image in a list, could be done through the sendToGallery method.
-
-            //TODO 2. make a save button that calls photoDAO (not directly) to save the images.
-
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO alert
+            AlertHelper.showAlert("Error", "Failed to capture image", Alert.AlertType.ERROR);
         }
     }
 
@@ -216,7 +210,7 @@ public class CameraController implements Initializable {
             photoModel.saveImageAndPath(imagesToSave, fileNames, currentUser, productNumber, tag);
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO alert
+            AlertHelper.showAlert("Error", "Failed to save images", Alert.AlertType.ERROR);
         }
         //shut down the ExecutorService and stop the use of camera
         if (mainPreviewExecutor != null && !mainPreviewExecutor.isShutdown()) {
