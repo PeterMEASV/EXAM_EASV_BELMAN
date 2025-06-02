@@ -3,6 +3,7 @@ package exam_easv_belman.DAL;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.BLL.exceptions.BelmanDALException;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -57,7 +58,7 @@ public class UserDAO implements IUserDataAccess {
             }
 
         } catch (SQLException e) {
-            throw new Exception();
+            throw new BelmanDALException("Failed to find username in db", e);
         }
         return null;
     }
@@ -104,7 +105,7 @@ public class UserDAO implements IUserDataAccess {
             return user;
 
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw new BelmanDALException("failed to create user in db", e);
         }
     }
 
@@ -124,7 +125,7 @@ public class UserDAO implements IUserDataAccess {
 
         } catch (SQLException e) {
             AlertHelper.showAlert("Error", "Error Deleting User", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            throw new BelmanDALException("Failed to delete user from db", e);
         }
 
     }
@@ -166,7 +167,7 @@ public class UserDAO implements IUserDataAccess {
             return users;
 
         } catch (SQLException e) {
-            throw new Exception(e);
+            throw new BelmanDALException("Failed to get all users from db", e);
         }
     }
 
@@ -196,7 +197,7 @@ public class UserDAO implements IUserDataAccess {
             System.out.println("user updated");
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new BelmanDALException("Failed to update user in db", e);
         }
     }
 
@@ -216,7 +217,7 @@ public class UserDAO implements IUserDataAccess {
             statement.executeUpdate();
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Error attaching signature", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            throw new BelmanDALException("Failed to attach signature to user in db", e);
         }
 
     }

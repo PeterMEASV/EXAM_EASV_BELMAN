@@ -3,6 +3,7 @@ package exam_easv_belman.GUI.Controllers;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.OpenCVStrategy;
 import exam_easv_belman.BLL.PhotoStrategy;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.BLL.exceptions.CameraNotFoundException;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.util.AlertHelper;
@@ -103,10 +104,10 @@ public class CameraController implements Initializable {
             strategy.start();
         } catch (CameraNotFoundException e) {
             AlertHelper.showAlert("Camera error", "Error opening the camera. ERROR(CC106)", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            throw new BelmanGUIException("Camera error", e);
         } catch (Exception e) {
             AlertHelper.showAlert("Camera not found", "The camera was not found. ERROR(CC107)", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            throw new BelmanGUIException("Camera not found", e);
         }
         mainPreviewExecutor = Executors.newSingleThreadScheduledExecutor();
         mainPreviewExecutor.scheduleAtFixedRate(() -> {
@@ -118,7 +119,7 @@ public class CameraController implements Initializable {
                 });
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new BelmanGUIException("Error taking photo", e);
             }
             //30 fps
         }, 0, 33, TimeUnit.MILLISECONDS);
@@ -178,8 +179,8 @@ public class CameraController implements Initializable {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to capture image", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Error taking photo", e);
         }
     }
 
@@ -209,8 +210,8 @@ public class CameraController implements Initializable {
         try {
             photoModel.saveImageAndPath(imagesToSave, fileNames, currentUser, productNumber, tag);
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to save images", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Error saving images", e);
         }
         //shut down the ExecutorService and stop the use of camera
         if (mainPreviewExecutor != null && !mainPreviewExecutor.isShutdown()) {
@@ -219,7 +220,7 @@ public class CameraController implements Initializable {
             try {
                 strategy.stop();
             } catch (Exception e) {
-                //TODO exception
+                throw new BelmanGUIException("Error stopping camera", e);
             }
         }
 
@@ -228,7 +229,7 @@ public class CameraController implements Initializable {
                 try {
                     pDC.setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new BelmanGUIException("Error setting order number", e);
                 }
             }
         });
@@ -240,7 +241,7 @@ public class CameraController implements Initializable {
             try {
                 ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new BelmanGUIException("Error setting order number", e);
             }
         });
         //shut down the ExecutorService and stop the use of camera
@@ -250,7 +251,7 @@ public class CameraController implements Initializable {
             try {
                 strategy.stop();
             } catch (Exception e) {
-                //TODO exception
+                throw new BelmanGUIException("Error stopping camera", e);
             }
         }
     }

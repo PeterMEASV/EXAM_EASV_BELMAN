@@ -5,6 +5,7 @@ import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.OrderManager;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
@@ -73,6 +74,7 @@ public class OrderController {
             }
         } catch (Exception e) {
             AlertHelper.showAlert("Database Error", "Could not load order numbers from the database: " + e.getMessage(), Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Database failed", e);
         }
 
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-search.png")));
@@ -182,12 +184,13 @@ public class OrderController {
                         try {
                             ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            throw new BelmanGUIException("Failed to load PhotoDocView", e);
                         }
                 }
             });
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load PhotoDocView", e);
         }
 
     }
@@ -209,13 +212,13 @@ public class OrderController {
                     try {
                         ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new BelmanGUIException("Failed to load QCView", e);
                     }
                 }
             });
             } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load QCView", e);
 
         }
 
@@ -225,7 +228,7 @@ public class OrderController {
         try {
             Navigator.getInstance().goTo(View.ADMIN);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("Failed to load UserManagementView", e);
         }
     }
 
@@ -233,7 +236,7 @@ public class OrderController {
         try {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("Failed to load OrderView", e);
         }
     }
 }

@@ -4,6 +4,7 @@ import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.util.Navigator;
@@ -85,38 +86,50 @@ public class PhotoDocController {
     @FXML
     private void initialize() throws Exception {
 
-        additionalImagesFromDatabase = FXCollections.observableArrayList();
-        orderOfPhotos = FXCollections.observableArrayList();
-        productModel = new ProductModel();
-        orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
-        photoModel = new PhotoModel();
-        Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-log.png")));
-        ImageView imgView = new ImageView(img);
-        btnPrev.setGraphic(imgView);
+        try{
+            additionalImagesFromDatabase = FXCollections.observableArrayList();
+            orderOfPhotos = FXCollections.observableArrayList();
+            productModel = new ProductModel();
+            orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
+            photoModel = new PhotoModel();
+            Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-log.png")));
+            ImageView imgView = new ImageView(img);
+            btnPrev.setGraphic(imgView);
 
-        User currentUser = SessionManager.getInstance().getCurrentUser();
-        if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
-            DRPDown.setVisible(true);
-        } else {
-            DRPDown.setVisible(false);
+            User currentUser = SessionManager.getInstance().getCurrentUser();
+            if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
+                DRPDown.setVisible(true);
+            } else {
+                DRPDown.setVisible(false);
+            }
+
+            lblUser.setText(currentUser.getFirstName() + " " + currentUser.getLastName());
+            timerManager = new TimerManager(objStatus);
+            timerManager.initialize();
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load PhotoDocView", e);
         }
 
-        lblUser.setText(currentUser.getFirstName() + " " + currentUser.getLastName());
-        timerManager = new TimerManager(objStatus);
-        timerManager.initialize();
 
     }
 
 
     private void handleEmptyImage(String tag) {
-        timerManager.cleanup();
-        System.out.println("tag opened: " + tag);
-        Navigator.getInstance().goTo(View.CAMERA, controller -> {
-            if(controller instanceof CameraController)
-            {
-                ((CameraController) controller).setTag(tag);
-            }
-        });
+        try{
+            timerManager.cleanup();
+            System.out.println("tag opened: " + tag);
+            Navigator.getInstance().goTo(View.CAMERA, controller -> {
+                if(controller instanceof CameraController)
+                {
+                    ((CameraController) controller).setTag(tag);
+                }
+            });
+        }
+        catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load PhotoDocView", e);
+        }
     }
 
 
@@ -157,56 +170,61 @@ private void handleImageClick(Photo photo) {
         });
     }
     catch (Exception e) {
-        e.printStackTrace();
         AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+        throw new BelmanGUIException("Failed to load PhotoDocView", e);
     }
     }
 
     public void setOrderNumber(String orderNumber) throws Exception {
-        SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
-        txtOrderNumber.setText(orderNumber + "-");
-        this.orderNumber = orderNumber;
-        isProduct = SessionManager.getInstance().getIsProduct();
-        if(isProduct)
-        {
-            String productNumber = SessionManager.getInstance().getCurrentProductNumber();
-            String productIdentifier = productNumber.substring(productNumber.lastIndexOf("-")+1);
-            btnProduct.setText(productIdentifier);
-            imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
-            additionalImagesFromDatabase.clear();
-            for(Photo photo : imagesFromDatabase)
-            {
-                if(java.util.Objects.equals(photo.getTag(), "Additional"))
+            try {
+                SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
+                txtOrderNumber.setText(orderNumber + "-");
+                this.orderNumber = orderNumber;
+                isProduct = SessionManager.getInstance().getIsProduct();
+                if(isProduct)
                 {
-                    additionalImagesFromDatabase.add(photo);
+                    String productNumber = SessionManager.getInstance().getCurrentProductNumber();
+                    String productIdentifier = productNumber.substring(productNumber.lastIndexOf("-")+1);
+                    btnProduct.setText(productIdentifier);
+                    imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
+                    additionalImagesFromDatabase.clear();
+                    for(Photo photo : imagesFromDatabase)
+                    {
+                        if(Objects.equals(photo.getTag(), "Additional"))
+                        {
+                            additionalImagesFromDatabase.add(photo);
+                        }
+                    }
+                    int pageCount;
+                    if(imagesFromDatabase.isEmpty()) {
+                        pageCount = 1;
+                    }
+                    else {
+                        int additionalPhotosCount = additionalImagesFromDatabase.size();
+                        if (additionalPhotosCount == 0) {
+                            pageCount = 1;
+                        } else {
+                            pageCount = 1 + (int) Math.ceil((double) additionalPhotosCount / MAX_PHOTOS);
+                        }
+                    }
+
+
+                    pagination.setPageCount(pageCount);
+                    pagination.setPageFactory(this::fillPhotoGrid);
                 }
-            }
-            int pageCount;
-            if(imagesFromDatabase.isEmpty()) {
-                pageCount = 1;
-            }
-            else {
-                int additionalPhotosCount = additionalImagesFromDatabase.size();
-                if (additionalPhotosCount == 0) {
-                    pageCount = 1;
-                } else {
-                    pageCount = 1 + (int) Math.ceil((double) additionalPhotosCount / MAX_PHOTOS);
+                else
+                {
+                    int pageCount = 1;
+                    pagination.setPageCount(pageCount);
+                    pagination.setPageFactory(this::fillPhotoGrid);
                 }
+                populateMenu();
+            } catch (Exception e) {
+                AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+                throw new BelmanGUIException("Failed to load PhotoDocView", e);
             }
 
-
-            pagination.setPageCount(pageCount);
-            pagination.setPageFactory(this::fillPhotoGrid);
         }
-        else
-        {
-            int pageCount = 1;
-            pagination.setPageCount(pageCount);
-            pagination.setPageFactory(this::fillPhotoGrid);
-        }
-        populateMenu();
-
-    }
 
     public void handleReturn(ActionEvent actionEvent) {
         String orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
@@ -220,16 +238,16 @@ private void handleImageClick(Photo photo) {
                 if (controller instanceof SendViewController) {
                     try {
                         ((SendViewController) controller).setOrderNumber(orderNumber);
-                    } catch (SQLException e) {
-                        AlertHelper.showAlert("Error", "Failed to load OrderView", Alert.AlertType.ERROR);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        AlertHelper.showAlert("Error", "Failed to load OrderView", Alert.AlertType.ERROR);
+                        throw new BelmanGUIException("Failed to load OrderView", e);
+
                     }
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load OrderView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load OrderView", e);
         }
 
 
@@ -251,7 +269,7 @@ private void handleImageClick(Photo photo) {
                     setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                 } catch (Exception e) {
                     AlertHelper.showAlert("Error", "Failed to load PhotoDocView (PopulateMenu)", Alert.AlertType.ERROR);
-                    e.printStackTrace();
+                    throw new BelmanGUIException("Failed to load PhotoDocView (PopulateMenu)", e);
                 }
             });
             btnProduct.getItems().add(menuItem);
@@ -389,7 +407,7 @@ private void handleImageClick(Photo photo) {
                     gridPhoto.add(imageContainer, column, row);
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new BelmanGUIException("Failed to load PhotoDocView", e);
                 }
 
             }
@@ -507,7 +525,7 @@ private void handleImageClick(Photo photo) {
                 gridPhoto.add(imageContainer, column, row);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new BelmanGUIException("Failed to load PhotoDocView", e);
             }
             tagIndex++;
             column++;
@@ -537,7 +555,7 @@ private void handleImageClick(Photo photo) {
         try {
             Navigator.getInstance().goTo(View.ADMIN);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("Failed to load UserManagementView", e);
         }
     }
 
@@ -546,7 +564,7 @@ private void handleImageClick(Photo photo) {
         try {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BelmanGUIException("Failed to load OrderView", e);
         }
     }
 
@@ -558,13 +576,13 @@ private void handleImageClick(Photo photo) {
                     try {
                         ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new BelmanGUIException("Failed to load QCView", e);
                     }
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load QCView", e);
 
         }
 

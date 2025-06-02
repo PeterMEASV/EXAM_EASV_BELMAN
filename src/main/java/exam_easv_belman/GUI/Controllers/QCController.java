@@ -4,6 +4,7 @@ import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.util.Navigator;
@@ -81,38 +82,42 @@ public class QCController implements Initializable {
 
 
     public void setOrderNumber(String orderNumber) throws Exception {
-        SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
-        txtOrderNumber.setText(orderNumber + "-");
-        isProduct = SessionManager.getInstance().getIsProduct();
-        if(isProduct)
-        {
-            String productNumber = SessionManager.getInstance().getCurrentProductNumber();
-            String productIdentifier = productNumber.substring(productNumber.lastIndexOf("-")+1);
-            btnProduct.setText(productIdentifier);
-            imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
-            additionalImagesFromDatabase.clear();
-            for(Photo photo : imagesFromDatabase)
+        try {
+            SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
+            txtOrderNumber.setText(orderNumber + "-");
+            isProduct = SessionManager.getInstance().getIsProduct();
+            if(isProduct)
             {
-                if(java.util.Objects.equals(photo.getTag(), "Additional"))
+                String productNumber = SessionManager.getInstance().getCurrentProductNumber();
+                String productIdentifier = productNumber.substring(productNumber.lastIndexOf("-")+1);
+                btnProduct.setText(productIdentifier);
+                imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
+                additionalImagesFromDatabase.clear();
+                for(Photo photo : imagesFromDatabase)
                 {
-                    additionalImagesFromDatabase.add(photo);
+                    if(Objects.equals(photo.getTag(), "Additional"))
+                    {
+                        additionalImagesFromDatabase.add(photo);
+                    }
                 }
+                int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
+                if(pageCount == 1 && !additionalImagesFromDatabase.isEmpty())
+                {
+                    pageCount+=1;
+                }
+                pagination.setPageCount(pageCount);
+                pagination.setPageFactory(this::fillPhotoGrid);
             }
-            int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
-            if(pageCount == 1 && !additionalImagesFromDatabase.isEmpty())
+            else
             {
-                pageCount+=1;
+                int pageCount = 1;
+                pagination.setPageCount(pageCount);
+                pagination.setPageFactory(this::fillPhotoGrid);
             }
-            pagination.setPageCount(pageCount);
-            pagination.setPageFactory(this::fillPhotoGrid);
+            populateMenu();
+        } catch (Exception e) {
+            throw new BelmanGUIException("Failed to load QCView", e);
         }
-        else
-        {
-            int pageCount = 1;
-            pagination.setPageCount(pageCount);
-            pagination.setPageFactory(this::fillPhotoGrid);
-        }
-    populateMenu();
     }
 
     @Override
@@ -123,7 +128,7 @@ public class QCController implements Initializable {
             productModel = new ProductModel();
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
-            throw new RuntimeException(e);
+            throw new BelmanGUIException("Failed to load QCView", e);
         }
 
         photoModel = new PhotoModel();
@@ -155,8 +160,8 @@ public class QCController implements Initializable {
         try {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load OrderView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load OrderView", e);
         }
     }
     private Node fillFirstPhotoGrid(int pageIndex) {
@@ -243,7 +248,7 @@ public class QCController implements Initializable {
                             tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
 
                         } catch (SQLException e) {
-                            throw new RuntimeException(e);
+                            throw new BelmanGUIException("Failed to change verification status", e);
                         }
                     });
                     MenuItem deny = new MenuItem("Deny");
@@ -255,7 +260,7 @@ public class QCController implements Initializable {
                             openCommentView(photo);
 
                         } catch (SQLException | IOException e) {
-                            throw new RuntimeException(e);
+                            throw new BelmanGUIException("Failed to change verification status", e);
                         }
                     });
 
@@ -288,7 +293,7 @@ public class QCController implements Initializable {
                     gridPhoto.add(imageContainer, column, row);
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new BelmanGUIException("Failed to load PhotoDocView", e);
                 }
             }
                 tagIndex++;
@@ -396,7 +401,7 @@ public class QCController implements Initializable {
                         tagLabel.setStyle(getTagStyleBasedOnVerification(photo));
 
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        throw new BelmanGUIException("Failed to change verification status", e);
                     }
                 });
                 MenuItem deny = new MenuItem("Deny");
@@ -408,7 +413,7 @@ public class QCController implements Initializable {
                         openCommentView(photo);
 
                     } catch (SQLException | IOException e) {
-                        throw new RuntimeException(e);
+                        throw new BelmanGUIException("Failed to change verification status", e);
                     }
                 });
 
@@ -431,7 +436,7 @@ public class QCController implements Initializable {
                 gridPhoto.add(imageContainer, column, row);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new BelmanGUIException("Failed to load PhotoDocView", e);
             }
             tagIndex++;
             column++;
@@ -478,8 +483,8 @@ public class QCController implements Initializable {
             });
         }
         catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load PhotoDocView", e);
         }
     }
 
@@ -497,14 +502,15 @@ public class QCController implements Initializable {
                         ((SendViewController) controller).setOrderNumber(orderNumber);
                     } catch (SQLException e) {
                         AlertHelper.showAlert("Error", "Failed to load SendView", Alert.AlertType.ERROR);
+                        throw new BelmanGUIException("Failed to load SendView", e);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new BelmanGUIException("Failed to load SendView", e);
                     }
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load SendView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load SendView", e);
         }
 
 
@@ -515,7 +521,8 @@ public class QCController implements Initializable {
         try {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
-            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load OrderView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load OrderView", e);
         }
     }
 
@@ -534,7 +541,7 @@ public class QCController implements Initializable {
                     setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                 } catch (Exception e) {
                     AlertHelper.showAlert("Error", "Failed to load PhotoDocView (PopulateMenu)", Alert.AlertType.ERROR);
-                    e.printStackTrace();
+                    throw new BelmanGUIException("Failed to load PhotoDocView (PopulateMenu)", e);
                 }
             });
             btnProduct.getItems().add(menuItem);
@@ -549,13 +556,13 @@ public class QCController implements Initializable {
                     try {
                         ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new BelmanGUIException("Failed to load PhotoDocView", e);
                     }
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load PhotoDocView", e);
 
         }
     }
@@ -565,7 +572,8 @@ public class QCController implements Initializable {
         try {
             Navigator.getInstance().goTo(View.ADMIN);
         } catch (Exception e) {
-            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load AdminView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load AdminView", e);
         }
     }
 

@@ -3,6 +3,7 @@ package exam_easv_belman.GUI.Models;
 import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.PhotoManager;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import javafx.collections.ObservableList;
 
 import java.awt.image.BufferedImage;
@@ -17,7 +18,7 @@ public class PhotoModel {
         try {
             photoManager = new PhotoManager();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new BelmanGUIException("Failed loading PhotoModel", e);
         }
     }
 

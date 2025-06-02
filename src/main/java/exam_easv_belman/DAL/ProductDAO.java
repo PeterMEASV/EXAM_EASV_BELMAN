@@ -2,6 +2,7 @@ package exam_easv_belman.DAL;
 
 import exam_easv_belman.BE.Order;
 import exam_easv_belman.BE.Product;
+import exam_easv_belman.BLL.exceptions.BelmanDALException;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,6 +43,7 @@ public class ProductDAO implements IProductDataAccess {
         }
         catch(SQLException e){
             AlertHelper.showAlert("DB error", "Could not get products from DB", Alert.AlertType.ERROR);
+            throw new BelmanDALException("Error retrieving products from DB", e);
         }
         return products;
     }
@@ -69,6 +71,10 @@ public class ProductDAO implements IProductDataAccess {
                 productsList.add(tempProduct);
             }
         }
+        catch(SQLException e){
+            AlertHelper.showAlert("DB error", "Could not get products from DB", Alert.AlertType.ERROR);
+            throw new BelmanDALException("Error retrieving products from DB", e);
+        }
     return productsList;
     }
 
@@ -93,6 +99,9 @@ public class ProductDAO implements IProductDataAccess {
                 tempOrder.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 tempOrder.setComment(rs.getString("Comment"));
             }
+        }
+        catch(SQLException e){
+            throw new BelmanDALException("Could not retrieve the order", e);
         }
         return tempOrder;
         }

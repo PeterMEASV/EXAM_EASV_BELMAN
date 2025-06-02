@@ -2,6 +2,7 @@ package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Role;
+import exam_easv_belman.BLL.exceptions.BelmanGUIException;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.util.Navigator;
 import exam_easv_belman.BLL.util.SessionManager;
@@ -117,6 +118,7 @@ public class ImageController implements Initializable {
 
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Failed to initialize PhotoModel", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to initialize PhotoModel", e);
         }
 
         ContextMenu contextMenu = new ContextMenu();
@@ -127,7 +129,7 @@ public class ImageController implements Initializable {
                 photo.setVerifyStatus(2);
 
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new BelmanGUIException("Failed to change verify status", e);
             }
         });
         MenuItem deny = new MenuItem("Deny");
@@ -138,7 +140,7 @@ public class ImageController implements Initializable {
                 onHandleComment(null);
 
             } catch (SQLException | IOException e) {
-                throw new RuntimeException(e);
+                throw new BelmanGUIException("Failed to change verify status", e);
             }
         });
 
@@ -175,20 +177,20 @@ public class ImageController implements Initializable {
                         try {
                                 ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            throw new BelmanGUIException("Failed to set order number", e);
                         }
                     }
                     else if (controller instanceof QCController) {
                         try {
                             ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            throw new BelmanGUIException("Failed to set order number", e);
                         }
                     }
                 });
             } catch (Exception e) {
-                e.printStackTrace();
                 AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+                throw new BelmanGUIException("Error loading PhotoDocView ", e);
             }
     }
 
@@ -200,8 +202,8 @@ public class ImageController implements Initializable {
                 SessionManager.getInstance().logout();
             });
         } catch (Exception e) {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load LoginView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load LoginView", e);
         }
     }
 
@@ -212,8 +214,8 @@ public class ImageController implements Initializable {
                 photoModel.deleteImage(photo);
                 handleReturn(actionEvent);
             } catch (Exception e) {
-                e.printStackTrace();
                 AlertHelper.showAlert("Error", "Failed to delete photo", Alert.AlertType.ERROR);
+                throw new BelmanGUIException("Failed to delete photo", e);
             }
         });
     }
@@ -260,8 +262,8 @@ public class ImageController implements Initializable {
         }
         catch (Exception e)
         {
-            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load TicketManagementView", Alert.AlertType.ERROR);
+            throw new BelmanGUIException("Failed to load TicketManagementView", e);
         }
     }
 
