@@ -1,6 +1,7 @@
 package exam_easv_belman.DAL;
 
 import exam_easv_belman.BE.Order;
+import exam_easv_belman.BLL.exceptions.BelmanDALException;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,7 +46,7 @@ public class OrderDAO implements IOrderDataAccess {
                 return null;
             }
         } catch (SQLException e) {
-            throw new SQLException("Error retrieving email for order: " + orderNumber, e);
+            throw new BelmanDALException("Error retrieving email for order: " + orderNumber, e);
         }
     }
 
@@ -74,6 +75,7 @@ public class OrderDAO implements IOrderDataAccess {
             System.out.println("coment added?");
         } catch (SQLException e) {
             AlertHelper.showAlert("DB call error", "Could not add comment to order", Alert.AlertType.ERROR);
+            throw new BelmanDALException("Error adding comment to order: " + orderNumber, e);
         }
 
 
@@ -102,6 +104,9 @@ public class OrderDAO implements IOrderDataAccess {
                 return null;
             }
              }
+        catch (SQLException e) {
+            throw new BelmanDALException("Error retrieving comment for order: " + orderNumber, e);
+        }
     }
 
     public ObservableList<Order> getAllOrders() throws SQLException {
@@ -119,6 +124,9 @@ public class OrderDAO implements IOrderDataAccess {
                 order.setComment(rs.getString("comment"));
                 orders.add(order);
             }
+        }
+        catch (SQLException e) {
+            throw new BelmanDALException("Error retrieving all orders", e);
         }
         return orders;
 

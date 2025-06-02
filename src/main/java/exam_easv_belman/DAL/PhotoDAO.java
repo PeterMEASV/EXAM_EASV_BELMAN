@@ -4,6 +4,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerException;
 import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.BLL.exceptions.BelmanDALException;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,6 +37,7 @@ public class PhotoDAO implements IPhotoDataAccess{
 
     private DBConnector dbConnector;
     private final Path baseRelativePath = Paths.get("QC_Images");
+    Logger logger = Logger.getLogger(PhotoDAO.class.getName());
 
     public PhotoDAO() throws Exception {
         dbConnector = new DBConnector();
@@ -82,21 +85,18 @@ public class PhotoDAO implements IPhotoDataAccess{
                     //roll back the transaction if ANYTHING goes wrong.
                     connection.rollback();
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    //TODO exception handling
+                    throw new BelmanDALException("Error saving image to database", e);
                 }
             }
             deleteFiles(persistedPaths);
-            throw e;
-            //TODO exception handling
+            throw new BelmanDALException("Error saving image to database", e);
         } finally {
             if (connection != null) {
                 try {
                     connection.setAutoCommit(true);
                     connection.close();
                 } catch (SQLException e) {
-                    //TODO exception handling
-                    e.printStackTrace();
+                    throw new BelmanDALException("Error closing database connection", e);
                 }
             }
         }
@@ -113,7 +113,6 @@ public class PhotoDAO implements IPhotoDataAccess{
     private List<Path> saveImages(List<BufferedImage> photos,
                                   List<String> fileNames,
                                   Path orderFolderPath) throws IOException {
-       //if the dir doesn't exist, then make it. if it does, do nothing(IDEMPOTENT).
        Files.createDirectories(orderFolderPath);
 
        Path tempDir = Files.createTempDirectory(orderFolderPath, "temp_images_");
@@ -143,7 +142,7 @@ public class PhotoDAO implements IPhotoDataAccess{
        } catch (IOException e) {
            deleteFiles(movedFilePaths);
            deleteRecursively(tempDir);
-           throw e;
+           throw new BelmanDALException("Error saving image to file system", e);
        }
     }
 
@@ -160,13 +159,12 @@ public class PhotoDAO implements IPhotoDataAccess{
             walk.sorted(Comparator.reverseOrder()).forEach(path -> {
                 try {
                     Files.deleteIfExists(path);
-                } catch (IOException ignoredException) {
-                    //Deletion failure is what it is
-                    //ideally its logged or flagged so it can be manually deleted later.
+                } catch (IOException e) {
+                    logger.warning("Failed to delete file: " + path + " Error: " + e.getMessage());
                 }
             });
-        } catch (IOException ignoredException) {
-            //same as previous catch
+        } catch (IOException e) {
+            logger.warning("Failed to delete file " + e.getMessage());
         }
     }
 
@@ -178,9 +176,8 @@ public class PhotoDAO implements IPhotoDataAccess{
         for (Path path : movedFilePaths) {
              try {
                  Files.deleteIfExists(path);
-             } catch (IOException ignoredException) {
-                 //Deletion failure is what it is
-                 //ideally its logged or flagged so it can be manually deleted later.
+             } catch (IOException e) {
+                 logger.warning("Failed to delete file: " + path + " Error: " + e.getMessage());
              }
         }
     }
@@ -219,6 +216,9 @@ public class PhotoDAO implements IPhotoDataAccess{
             }
             statement.executeBatch();
         }
+        catch(SQLServerException e){
+            throw new BelmanDALException("Error saving image to database", e);
+        }
     }
 
     /**
@@ -253,6 +253,9 @@ public class PhotoDAO implements IPhotoDataAccess{
             System.out.println("length:" + photos.size());
             return photos;
         }
+        catch(SQLException e){
+            throw new BelmanDALException("Error retrieving photos from database", e);
+        }
     }
 
     /**
@@ -286,6 +289,9 @@ public class PhotoDAO implements IPhotoDataAccess{
                 photos.add(photo);
             }
         }
+        catch(SQLException e){
+            throw new BelmanDALException("Error retrieving photos from database", e);
+        }
 
         // Sort photos by product number extracted from the order number
         return photos.stream()
@@ -304,7 +310,7 @@ public class PhotoDAO implements IPhotoDataAccess{
             String[] parts = orderNumber.split("-");
             return Integer.parseInt(parts[parts.length - 1]);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warning("ExtractProductNumber used MAX_VALUE: " + orderNumber + " Error: " + e.getMessage());
             return Integer.MAX_VALUE;
         }
     }
@@ -330,6 +336,9 @@ public class PhotoDAO implements IPhotoDataAccess{
             }
             return product;
         }
+        catch(SQLException e){
+            throw new BelmanDALException("Error retrieving product from database", e);
+        }
 
     }
 
@@ -347,6 +356,9 @@ public class PhotoDAO implements IPhotoDataAccess{
             ps.setInt(2, photo.getId());
             ps.executeUpdate();
             System.out.println("comment added to photo with id " + photo.getId());
+        }
+        catch(SQLServerException e){
+            throw new BelmanDALException("Error saving comment to database", e);
         }
     }
 
@@ -366,7 +378,7 @@ public class PhotoDAO implements IPhotoDataAccess{
             System.out.println("verify state changed to " + approval + " for photo with id " + photo.getId());
         }
         catch (SQLServerException e){
-            e.printStackTrace();
+            throw new BelmanDALException("Error saving verify state to database", e);
         }
     }
 
@@ -384,14 +396,13 @@ public class PhotoDAO implements IPhotoDataAccess{
             System.out.println("photo with id " + photo.getId() + " deleted from database.");
         }
         catch(SQLServerException e){
-            throw new SQLException(e);
+            throw new BelmanDALException("Error deleting photo from database", e);
         }
 
         try{
             Files.deleteIfExists(Paths.get(photo.getFilepath()));
         } catch (IOException e) {
-            //TODO Burde nok smide et eller andet.. kører bare runtime for nu.
-            throw new RuntimeException(e);
+           throw new BelmanDALException("Error deleting photo from file system", e);
         }
     }
 }
