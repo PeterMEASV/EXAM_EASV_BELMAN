@@ -66,7 +66,6 @@ public class UserCreationDialogController implements Initializable {
     @FXML
     private void handleCreate(ActionEvent actionEvent) {
 
-        //TODO input validation
         if(validateFields()) {
             String username = txtUsername.getText().trim();
             String password = txtPassword.getText().trim();
@@ -82,7 +81,7 @@ public class UserCreationDialogController implements Initializable {
 
     }
 
-    //TODO implement this.
+
     private boolean validateFields() {
         StringBuilder errors = new StringBuilder();
 
