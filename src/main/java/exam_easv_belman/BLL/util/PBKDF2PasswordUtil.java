@@ -62,7 +62,6 @@ public class PBKDF2PasswordUtil {
      * @return true if the two byte arrays are equal in content and length; false otherwise
      */
     private static boolean controlledEquals(byte[] hash, byte[] combinedHash) {
-        //todo understand this better.
         //cool new operator ^ (bitwise XOR) if equal in length = 0, if not, != 0
         int diff = hash.length ^ combinedHash.length;
         for (int i = 0; i < hash.length && i < combinedHash.length; i++) {
@@ -84,7 +83,6 @@ public class PBKDF2PasswordUtil {
      * @return a byte array containing the derived hash
      * @throws Exception if an error occurs during hash generation, such as an unsupported algorithm
      */
-    //TODO comments
     private static byte[] pbkdf2Hash(String password, byte[] salt, int iterations, int hashLength) throws Exception {
         try {
             PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, hashLength * 8);
