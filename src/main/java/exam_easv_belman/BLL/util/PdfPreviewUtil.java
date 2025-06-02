@@ -1,5 +1,6 @@
 package exam_easv_belman.BLL.util;
 
+import exam_easv_belman.BLL.exceptions.BelmanBLLException;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
@@ -30,46 +31,55 @@ public class PdfPreviewUtil {
      *
      * @param pdfFile    The PDF file to preview.
      * @param ownerStage The parent stage that owns the preview window.
-     * @throws IOException If an error occurs while loading or rendering the PDF file.
+     * @throws BelmanBLLException If an error occurs while loading or rendering the PDF file.
      */
-    public static void showPdfPreview(File pdfFile, Stage ownerStage) throws IOException{
-        PDDocument document = PDDocument.load(pdfFile);
-        PDFRenderer pdfRenderer = new PDFRenderer(document);
+    public static void showPdfPreview(File pdfFile, Stage ownerStage) throws BelmanBLLException {
+        try{
+            PDDocument document = PDDocument.load(pdfFile);
+            PDFRenderer pdfRenderer = new PDFRenderer(document);
 
-        VBox imageContainer = new VBox(10);
-        imageContainer.setStyle("-fx-background-color: #c1c1c1, - fx-padding: 10;");
+            VBox imageContainer = new VBox(10);
+            imageContainer.setStyle("-fx-background-color: #c1c1c1, - fx-padding: 10;");
 
 
-        for (int page = 0; page < document.getNumberOfPages(); page++) {
-            BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(page, 150);
-            Image fximage = SwingFXUtils.toFXImage(bufferedImage, null);
-            ImageView imageView = new ImageView(fximage);
-            imageView.setPreserveRatio(true);
-            imageView.setFitWidth(600);
-            imageContainer.getChildren().add(imageView);
-        }
-        document.close();
-
-        ScrollPane scrollPane = new ScrollPane(imageContainer);
-        scrollPane.setFitToWidth(true);
-
-        Stage previewStage = new Stage();
-        previewStage.initStyle(StageStyle.DECORATED);
-        previewStage.initOwner(ownerStage);
-        previewStage.initModality(Modality.NONE);;
-
-        previewStage.setScene(new Scene(scrollPane, 615, 800));
-        previewStage.setTitle("PDF Preview");
-        Image icon = new Image(Objects.requireNonNull(PdfPreviewUtil.class.getResourceAsStream("/Images/BELMAN_Logo_264pxl.png")));
-        previewStage.getIcons().add(icon);
-
-        previewStage.show();
-
-        ownerStage.getScene().addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
-            if (previewStage.isShowing()){
-                previewStage.close();
+            for (int page = 0; page < document.getNumberOfPages(); page++) {
+                BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(page, 150);
+                Image fximage = SwingFXUtils.toFXImage(bufferedImage, null);
+                ImageView imageView = new ImageView(fximage);
+                imageView.setPreserveRatio(true);
+                imageView.setFitWidth(600);
+                imageContainer.getChildren().add(imageView);
             }
-        });
+            document.close();
+
+            ScrollPane scrollPane = new ScrollPane(imageContainer);
+            scrollPane.setFitToWidth(true);
+
+            Stage previewStage = new Stage();
+            previewStage.initStyle(StageStyle.DECORATED);
+            previewStage.initOwner(ownerStage);
+            previewStage.initModality(Modality.NONE);;
+
+            previewStage.setScene(new Scene(scrollPane, 615, 800));
+            previewStage.setTitle("PDF Preview");
+            Image icon = new Image(Objects.requireNonNull(PdfPreviewUtil.class.getResourceAsStream("/Images/BELMAN_Logo_264pxl.png")));
+            previewStage.getIcons().add(icon);
+
+            previewStage.show();
+
+            ownerStage.getScene().addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+                if (previewStage.isShowing()){
+                    previewStage.close();
+                }
+            });
+        } catch (IOException e) {
+            throw new BelmanBLLException("Failed to load or render PDF for preview: " + pdfFile.getAbsolutePath(), e);
+        } catch (BelmanBLLException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BelmanBLLException("An unexpected error occurred during PDF preview: " + pdfFile.getAbsolutePath(), e);
+        }
+
 
     }
 

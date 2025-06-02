@@ -1,6 +1,7 @@
 package exam_easv_belman.BLL;
 
 import exam_easv_belman.BE.User;
+import exam_easv_belman.BLL.exceptions.BelmanBLLException;
 import exam_easv_belman.BLL.util.PBKDF2PasswordUtil;
 import exam_easv_belman.DAL.UserRepositoryImpl;
 import exam_easv_belman.GUI.util.AlertHelper;
@@ -15,8 +16,12 @@ public class UserManager {
 
     private IUserRepository userRepo;
 
-    public UserManager() throws Exception {
-        userRepo = new UserRepositoryImpl();
+    public UserManager() throws BelmanBLLException {
+        try {
+            userRepo = new UserRepositoryImpl();
+        } catch (Exception e) {
+            throw new BelmanBLLException("Failed to initialize UserRepository.", e);
+        }
     }
 
     /**
@@ -39,7 +44,6 @@ public class UserManager {
         if (user == null || !PBKDF2PasswordUtil.verifyPassword(rawPassword, user.getPassword())) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
-
         return user;
     }
 
@@ -69,34 +73,58 @@ public class UserManager {
         return null;
     }
 
-    public User createUser(User user) throws Exception {
-        hashPassword(user);
-        return userRepo.save(user);
+    public User createUser(User user) throws BelmanBLLException {
+        try {
+            hashPassword(user);
+            return userRepo.save(user);
+        } catch (BelmanBLLException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BelmanBLLException("Failed to create user: " + user.getUsername(), e);
+        }
     }
 
-    public ObservableList<User> getAllUsers() throws Exception {
-         return userRepo.findAll();
+    public ObservableList<User> getAllUsers() throws BelmanBLLException {
+        try {
+            return userRepo.findAll();
+        } catch (Exception e) {
+            throw new BelmanBLLException("Failed to retrieve all users.", e);
+        }
     }
 
-    public void deleteUser(User user) throws Exception {
-        userRepo.delete(user);
+    public void deleteUser(User user) throws BelmanBLLException {
+        try {
+            userRepo.delete(user);
+        } catch (Exception e) {
+            throw new BelmanBLLException("Failed to delete user: " + (user != null ? user.getUsername() : "null"), e);
+        }
     }
 
-    public void attachSignature(User user) throws Exception {
-        userRepo.attachSignature(user);
+    public void attachSignature(User user) throws BelmanBLLException {
+        try {
+            userRepo.attachSignature(user);
+        } catch (Exception e) {
+            throw new BelmanBLLException("Failed to attach signature for user: " + (user != null ? user.getUsername() : "null"), e);
+        }
     }
 
     /**
      * Updates the selectedUsers password and hashes it before saving it.
      * @param selectedUser
      * @param passwordChanged
-     * @throws Exception
+     * @throws BelmanBLLException
      */
-    public void updateUser(User selectedUser, boolean passwordChanged) throws Exception {
-        if(passwordChanged){
-            hashPassword(selectedUser);
+    public void updateUser(User selectedUser, boolean passwordChanged) throws BelmanBLLException {
+        try {
+            if (passwordChanged) {
+                hashPassword(selectedUser);
+            }
+            userRepo.save(selectedUser);
+        } catch (BelmanBLLException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BelmanBLLException("Failed to update user: " + (selectedUser != null ? selectedUser.getUsername() : "null"), e);
         }
-        userRepo.save(selectedUser);
     }
 
     /**
@@ -106,15 +134,20 @@ public class UserManager {
      * with these hashed values.
      *
      * @param user The User object whose password and QR key need to be hashed.
-     * @throws Exception If an error occurs during the hashing process.
+     * @throws BelmanBLLException If an error occurs during the hashing process.
      */
-    private void hashPassword(User user) throws Exception {
-        String rawPwd = user.getPassword();
-        String hashedPwd = PBKDF2PasswordUtil.hashPassword(rawPwd);
-        user.setPassword(hashedPwd);
+    private void hashPassword(User user) throws BelmanBLLException {
+        try{
+            String rawPwd = user.getPassword();
+            String hashedPwd = PBKDF2PasswordUtil.hashPassword(rawPwd);
+            user.setPassword(hashedPwd);
 
-        String rawKey = user.getQrKey();
-        String hashedKey = PBKDF2PasswordUtil.hashPassword(rawKey);
-        user.setQrKey(hashedKey);
+            String rawKey = user.getQrKey();
+            String hashedKey = PBKDF2PasswordUtil.hashPassword(rawKey);
+            user.setQrKey(hashedKey);
+        } catch (Exception e){
+            throw new BelmanBLLException("Failed to hash password", e);
+        }
+
     }
 }
